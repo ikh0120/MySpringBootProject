@@ -13,6 +13,6 @@
 |   ;/             :  \  \|   | ,'                          ---`-'
 '---'               \  ' ;`----'
                      `--`
-SpringBoot App Info :: ${spring-boot.version} / ${application.version}
-Application Info :: ${application.title} ${application.version}
+SpringBoot App Info :: ${spring-boot.version} / ${application.version} ::
+Application Info :: ${application.title} ${application.version} ::
 Powered by Spring Boot ${spring-boot.version}
