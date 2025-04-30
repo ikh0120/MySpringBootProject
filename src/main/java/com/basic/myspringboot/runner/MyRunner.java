@@ -2,6 +2,8 @@ package com.basic.myspringboot.runner;
 
 import com.basic.myspringboot.config.CustomVO;
 import com.basic.myspringboot.property.MyBootProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -28,31 +30,33 @@ public class MyRunner implements ApplicationRunner { // 추상메서드 불러�
     @Autowired
     private CustomVO customVO;
 
+    // import org.slf4j.Logger, org.slf4j.LoggerFactory
+    private Logger logger = LoggerFactory.getLogger(MyRunner.class);
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        System.out.println("${myboot.name} = " + name);
-        System.out.println("${myboot.age} = " + age);
+        logger.debug("${myboot.name} = {}", name);
+        logger.debug("${myboot.age} = {}", age);
         //Environment.getProperty("변수") : 변수는 환경변수를 가져올 때 대소문자 구분을 안하지만 변수 이름은 구분함
-        System.out.println("${myboot.fullName} = " + environment.getProperty("myboot.fullName"));
+        logger.debug("${myboot.fullName} = {}", environment.getProperty("myboot.fullName"));
 
-        System.out.println();
-        System.out.println("MyBootProperties getName() = " + properties.getName());
-        System.out.println("MyBootProperties getAge() = " + properties.getAge());
-        System.out.println("MyBootProperties getFullName() = " + properties.getFullName());
-        System.out.println();
-        System.out.println("설정된 Port 번호 = "+environment.getProperty("local.server.port"));
-        System.out.println();
+       logger.info("\n");
+       logger.info("MyBootProperties getName() = {}", properties.getName());
+       logger.info("MyBootProperties getAge() = {}", properties.getAge());
+       logger.info("MyBootProperties getFullName() = {}", properties.getFullName());
+       logger.info("설정된 Port 번호 = {}", environment.getProperty("local.server.port"));
+       logger.info("\n");
 
         //java -jar -Dserver.port=8088 .\target\MySpringBootApp-0.0.1-SNAPSHOT.jar --myboot.name=스프링 --spring.profiles.active=prod
         // 이 명령어로 실행하면 --spring.profiles.active 옵션으로
         // applicaiton.properties보다 우선순위가 높기에
         // --spring.profiles.active=prod로 설정되어 test 빈이 비활설화, prod빈이 활성화되어 실행됨
-        System.out.println("활성화된 CustomVO Bean: " + customVO);
+        logger.info("활성화된 CustomVO Bean: {}", customVO);
 
         // foo 라는 VM 아규먼트가 있는지 확인하기
-        System.out.println("VM 아규먼트 foo : " + args.containsOption("foo"));
+        logger.debug("VM 아규먼트 foo : {}", args.containsOption("foo"));
         // bar 라는 Program 아규먼트가 있는지 확인하기
-        System.out.println("Program 아규먼트 bar : " + args.containsOption("bar"));
+        logger.debug("Program 아규먼트 bar : {}", args.containsOption("bar"));
 
         /*
             Iterable forEach(Consumer)
