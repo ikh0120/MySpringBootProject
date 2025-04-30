@@ -35,6 +35,11 @@ public class MyRunner implements ApplicationRunner { // 추상메서드 불러�
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        System.out.println("Logger 구현체 = " + logger.getClass().getName());
+
+        /** logger.info가 레벨이 더 상위여서
+         * spring.profile.active=prod로 설정하면
+         * logger.debug가 안나옴*/
         logger.debug("${myboot.name} = {}", name);
         logger.debug("${myboot.age} = {}", age);
         //Environment.getProperty("변수") : 변수는 환경변수를 가져올 때 대소문자 구분을 안하지만 변수 이름은 구분함
