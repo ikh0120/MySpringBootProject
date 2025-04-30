@@ -9,6 +9,7 @@ public class MyRunner implements ApplicationRunner { // 추상메서드 불러�
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-
+        System.out.println("VM 아규먼트 foo : " + args.containsOption("foo"));
+        System.out.println("Programe 아규먼트 bar : " + args.containsOption("bar"));
     }
 }
