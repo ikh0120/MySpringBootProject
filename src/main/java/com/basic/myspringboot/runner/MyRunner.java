@@ -43,6 +43,10 @@ public class MyRunner implements ApplicationRunner { // 추상메서드 불러�
         System.out.println("설정된 Port 번호 = "+environment.getProperty("local.server.port"));
         System.out.println();
 
+        //java -jar -Dserver.port=8088 .\target\MySpringBootApp-0.0.1-SNAPSHOT.jar --myboot.name=스프링 --spring.profiles.active=prod
+        // 이 명령어로 실행하면 --spring.profiles.active 옵션으로
+        // applicaiton.properties보다 우선순위가 높기에
+        // --spring.profiles.active=prod로 설정되어 test 빈이 비활설화, prod빈이 활성화되어 실행됨
         System.out.println("활성화된 CustomVO Bean: " + customVO);
 
         // foo 라는 VM 아규먼트가 있는지 확인하기
