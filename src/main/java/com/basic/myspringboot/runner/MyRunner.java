@@ -1,5 +1,6 @@
 package com.basic.myspringboot.runner;
 
+import com.basic.myspringboot.config.CustomVO;
 import com.basic.myspringboot.property.MyBootProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,9 @@ public class MyRunner implements ApplicationRunner { // 추상메서드 불러�
     @Autowired //@Component가 있기에 쓸 수 있음
     private MyBootProperties properties;
 
+    @Autowired
+    private CustomVO customVO;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         System.out.println("${myboot.name} = " + name);
@@ -37,6 +41,10 @@ public class MyRunner implements ApplicationRunner { // 추상메서드 불러�
         System.out.println("MyBootProperties getFullName() = " + properties.getFullName());
         System.out.println();
         System.out.println("설정된 Port 번호 = "+environment.getProperty("local.server.port"));
+        System.out.println();
+
+        System.out.println("활성화된 CustomVO Bean: " + customVO);
+
         // foo 라는 VM 아규먼트가 있는지 확인하기
         System.out.println("VM 아규먼트 foo : " + args.containsOption("foo"));
         // bar 라는 Program 아규먼트가 있는지 확인하기
