@@ -87,12 +87,12 @@ class CustomerRepositoryTest {
         assertThat(a003Customer.getCustomerName()).isNull();
 
 
-        //값이 있는 경우
+        // 고객 번호가 존재하는 경우
         Optional<Customer> optionalCustomer0 = customerRepository.findByCustomerId("A001");
         Customer a002Customer = optionalCustomer0.orElseGet(() -> new Customer());
         assertThat(a002Customer.getCustomerName()).isEqualTo("스프링");
 
-        //값이 없는 경우
+        // 고객 번호가 존재하지 않는 경우
         Customer notFoundCustomer = customerRepository.findByCustomerId("A000")
                 .orElseGet(() -> new Customer());
         assertThat(notFoundCustomer.getCustomerName()).isNull();
