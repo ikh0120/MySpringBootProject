@@ -21,9 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CustomerRepositoryTest {
     @Autowired
     CustomerRepository customerRepository;
-
     @Test
-//    @Disabled
+    //@Disabled
     void testFindBy() {
         Optional<Customer> optionalCustomer = customerRepository.findById(1L);
         //assertThat(optionalCustomer).isNotEmpty();
@@ -36,6 +35,68 @@ class CustomerRepositoryTest {
              * 같으면 JUnit5 테스트 통과 */
             assertThat(existCustomer.getId()).isEqualTo(1L);
         }
+
+        /**
+         * 추상메서드가 하나인 인터페이스를 함수형 인터페이스라 부름
+         * Interface Supplier<T>는
+         * get() 메서드가 존재하고 반환값은 T(엔티티)이다
+         * 함수형 인터페이스는 lambda식을 사용할 수 있다
+         */
+        /** Optional의 public T orElseGet(Supplier<? extends T> supplier) */
+        /** Supplier 인터페이스의 추상 메서드는 T get() 하나이다. */
+        // Optional<Customer> optionalCustomer2는 customer_id가 "A001"인 고객 레코드를 찾아 반환하는 메서드에서 리턴된 Optional 객체입니다.
+        // 이 Optional 객체는 해당 레코드가 존재할 경우 해당 Customer 객체를 감싸고, 존재하지 않으면 빈 Optional을 가지고 있습니다.
+
+        /* customer_id 컬럼이 "A001"인 레코드가 매핑되어 Optional<Customer> 타입으로 optionalCustomer2에 저장됨*/
+        Optional<Customer> optionalCustomer2 = customerRepository.findByCustomerId("A001");
+
+        // .orElseGet() 메서드는 Optional 객체에 값이 있을 때는 그 값을 반환하고, 값이 없을 때는 람다식을 실행하여 대체 값을 반환하는 메서드입니다.
+        // orElseGet의 파라미터는 Supplier<T> 인터페이스로, T는 Customer 타입입니다. 즉, 반환 값으로 Customer 객체를 생성할 수 있는 방법을 정의해야 합니다.
+        // 이 람다식 (() -> new Customer())는 Supplier<Customer> 인터페이스의 추상 메서드 get()을 구현한 것입니다.
+        // Supplier의 get() 메서드는 T 타입의 객체를 반환해야 하므로, 람다식에서 new Customer()를 반환합니다.
+        // 만약 Optional<Customer>가 비어있다면, 이 람다식이 실행되어 새 Customer 객체가 생성되어 반환됩니다.
+        /* optionalCustomer2의 값이 Customer 객체로 존재하기에 해당 객체가 a001Customer에 저장됨  */
+        /* 값이 없으면 new Customer()로 a001Customer에 저장됨  */
+        Customer a001Customer = optionalCustomer2.orElseGet(() -> new Customer());
+        // 따라서 optionalCustomer2가 값을 가지고 있을 경우, 해당 값을 a001Customer에 대입하고,
+        // 값이 없으면 new Customer()로 새로 생성한 Customer 객체를 a001Customer에 대입하게 됩니다.
+        // 이때, a001Customer는 Customer 타입의 객체로, 만약 DB에서 값이 없으면 새로 생성된 빈 Customer 객체가 들어가게 됩니다.
+
+        // a001Customer.getCustomerName()은 lombok의 @Getter로 생성된 메서드이고,
+        // optional에 값이 있었던 경우 DB의 customer_id가 "A001"인 레코드가 매핑된 것이므로
+        // 그 레코드의 customer_name은 "스프링"이다
+        // 따라서 assertThat("스프링").isEqualTo("스프링")이 되어 JUnit5 테스트가 통과한다
+        /* a001Customer 객체의 getCustomerName()으로 꺼낸 customer_name 컬럼 값이 "스프링" 이기에 테스트 통과 */
+        assertThat(a001Customer.getCustomerName()).isEqualTo("스프링");
+
+
+        /**customer_id값 중 "A003"은 존재하지 않음*/
+        Optional<Customer> optionalCustomer3 = customerRepository.findByCustomerId("A003");
+
+        assertThat(optionalCustomer3).isEmpty(); // 그래서 assertThat().isEmpty() 테스트 통과
+        // optionalCustomer3값이 null이면 new Customer()가 a003Cusomter에 들어가고
+        // optionalCustomer3값이 null이 아니면 들어있는 값이 a003Cusomter에 들어감
+        // 지금은 null이기에 a003Customer에 new Customer()가 들어감
+        Customer a003Customer = optionalCustomer3.orElseGet(() -> new Customer());
+        // new Customer()가 들어갔기에 null이 아님
+        assertThat(a003Customer).isNotNull();
+        //customer_name값을 정하지 않았기에 null
+        //여기서 @Column(nullable=false)으로 null값이 들어오지 못한다고 지정했지만
+        //Customer addCustomer = customerRepository.save(a003Customer);로
+        // 직접 저장하지 않아 테스트 통과됨
+        assertThat(a003Customer.getCustomerName()).isNull();
+
+
+        //값이 있는 경우
+        Optional<Customer> optionalCustomer0 = customerRepository.findByCustomerId("A001");
+        Customer a002Customer = optionalCustomer0.orElseGet(() -> new Customer());
+        assertThat(a002Customer.getCustomerName()).isEqualTo("스프링");
+
+        //값이 없는 경우
+        Customer notFoundCustomer = customerRepository.findByCustomerId("A000")
+                .orElseGet(() -> new Customer());
+        assertThat(notFoundCustomer.getCustomerName()).isNull();
+
 
     }
 

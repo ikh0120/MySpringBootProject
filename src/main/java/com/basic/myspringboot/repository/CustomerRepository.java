@@ -9,6 +9,7 @@ import java.util.Optional;
 // DAO(Data Access Object) 클래스와 같은 역할 수행
 // <Entity, 엔티티 pk의 type>
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    // JPA는 DB 레코드를 Java 객체(Entity)로 자동 매핑해줌
     /* Query Method 정의하면 JPA가 메서드 명에 맞는 JPQL(Java Persistence Query Language)로 변환하여 실행하고,
     이 JPQL은 내부적으로 SQL로 변환되어 실제 데이터베이스에 접근하게 된다.*/
 
