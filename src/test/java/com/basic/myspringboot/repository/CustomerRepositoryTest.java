@@ -27,8 +27,13 @@ class CustomerRepositoryTest {
     void testFindBy() {
         Optional<Customer> optionalCustomer = customerRepository.findById(1L);
         //assertThat(optionalCustomer).isNotEmpty();
-        if(optionalCustomer.isPresent()){ // isPresent() 체크 후 get()으로 객체를 가져와야 안전하다
+        /* Optional.isPresent(): 값이 들어있으면 true 없으면 false
+         * Optional.isPresent()로 값이 들어있는지 체크 후 */
+        if(optionalCustomer.isPresent()){
+            // Optional.get()으로 Optional 객체 안의 값을 가져옴
             Customer existCustomer = optionalCustomer.get();
+            /* 가져온 객체에서 getId()로 id를 가져온 뒤 .isEqualTo()로 비교
+             * 같으면 JUnit5 테스트 통과 */
             assertThat(existCustomer.getId()).isEqualTo(1L);
         }
 
@@ -52,6 +57,10 @@ class CustomerRepositoryTest {
         //When(실행 단계)
         /** customerRepository.save(customer);에서 auto_increment로 설정한 id가 증가함
          * @Rollback(value = false)가 없다면 롤백되지만 MariaDB의 auto_increment 특성상 롤백되었어도 증가된 id값은 되돌리지 않음
+         */
+        /* unique=true인 컬럼이 존재할 경우,
+         * 동일한 값의 레코드를 삽입하면 Duplicate Error가 발생한다.
+         * 이를 줄여서 Dup Error라고 부른다.
          */
         Customer addCustomer = customerRepository.save(customer);
 
