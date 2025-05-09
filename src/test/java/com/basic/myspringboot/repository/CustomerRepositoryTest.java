@@ -23,17 +23,31 @@ class CustomerRepositoryTest {
     CustomerRepository customerRepository;
 
     @Test
-    void testByNotFoundException() {
-        //public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier)
-        //Supplier 인터페이스의 추상 메서드 T get()
-        Customer customer = customerRepository.findByCustomerId("A001")
+    void testUpdateCustomer(){
+        Customer customer = customerRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Customer Not Found"));
-        assertThat(customer.getCustomerId()).isEqualTo("A001");
+        // 수정하려면 Entity의 Setter Method를 호출
+        customer.setCustomerName("스프링부트");
+        customerRepository.save(customer);
+        assertThat(customer.getCustomerName()).isEqualTo("스프링부트");
+
+    }
+
+    @Test
+    void testByNotFoundException() { // 없을 때는 Error내서 멈추게 함
+        // <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier)
+        //                                      //Throwable이 RuntimeException보다 더 상위클래스
+        // Supplier 인터페이스의 추상 메서드 T get()
+
+        // 정상적이면 T 객체 반환, 없으면 RuntimeException("Customer Not Found") 반환
+        Customer customer = customerRepository.findByCustomerId("A0013")
+                .orElseThrow(() -> new RuntimeException("Customer Not Found"));
+//        assertThat(customer.getCustomerId()).isEqualTo("A001");
     }
 
     @Test
     //@Disabled
-    void testFindBy() {
+    void testFindBy() { // Optional.orElseGet(() -> T)로 주어진 값이 없을 때 빈 객체를 생성한다
         Optional<Customer> optionalCustomer = customerRepository.findById(1L);
         //assertThat(optionalCustomer).isNotEmpty();
         /* Optional.isPresent(): 값이 들어있으면 true 없으면 false
