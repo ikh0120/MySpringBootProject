@@ -23,15 +23,21 @@ class CustomerRepositoryTest {
     CustomerRepository customerRepository;
 
     @Test
+//    @Disabled
     void testFindBy() {
         Optional<Customer> optionalCustomer = customerRepository.findById(1L);
-        assertThat(optionalCustomer).isNotEmpty();
+        //assertThat(optionalCustomer).isNotEmpty();
+        if(optionalCustomer.isPresent()){ // isPresent() 체크 후 get()으로 가져오기
+            Customer existCustomer = optionalCustomer.get();
+            assertThat(existCustomer.getId()).isEqualTo(1L);
+        }
+
 
     }
 
     @Test
     @Rollback(value = false) //Rollback 처리하지 말아라
-    @Disabled // 사용 안함
+    @Disabled // 해당 테스트 케이스 사용 안함
     void testCreateCustomer() throws Exception { //예외 던지기
         /**Test 작성의 핵심 구조인 Given-When-Then 패턴
          //Given(준비 단계):    테스트릴 시작하기 위해 Object나 데이터, 상태를 준비하는 단계
@@ -43,11 +49,11 @@ class CustomerRepositoryTest {
         Customer customer = new Customer();
         customer.setCustomerId("A002");
         customer.setCustomerName("스프링2");
+
         //When(실행 단계)
         /** customerRepository.save(customer);에서 auto_increment로 설정한 id가 증가함
          * @Rollback(value = false)가 없다면 롤백되지만 MariaDB의 auto_increment 특성상 롤백되었어도 증가된 id값은 되돌리지 않음
          */
-
         Customer addCustomer = customerRepository.save(customer);
 
         //Then(검증 단계)

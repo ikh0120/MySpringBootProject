@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter @Setter
 public class Customer {
     //Primary Key, PK 값을 persistence provider(구현체인 Hibernate) 가 알아서 결정해라
-//    @Id @GeneratedValue(strategy = GenerationType.AUTO) //Auto로 할 경우 테이블명_seq 테이블이 생성됨
+    //@Id @GeneratedValue(strategy = GenerationType.AUTO) //Auto로 할 경우 테이블명_seq 테이블이 생성됨
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) // Maria DB라 IDENTITY로 할것이다
     private Long id;
 
