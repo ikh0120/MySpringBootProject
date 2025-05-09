@@ -27,11 +27,10 @@ class CustomerRepositoryTest {
     void testFindBy() {
         Optional<Customer> optionalCustomer = customerRepository.findById(1L);
         //assertThat(optionalCustomer).isNotEmpty();
-        if(optionalCustomer.isPresent()){ // isPresent() 체크 후 get()으로 가져오기
+        if(optionalCustomer.isPresent()){ // isPresent() 체크 후 get()으로 객체를 가져와야 안전하다
             Customer existCustomer = optionalCustomer.get();
             assertThat(existCustomer.getId()).isEqualTo(1L);
         }
-
 
     }
 
