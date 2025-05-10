@@ -23,8 +23,19 @@ class CustomerRepositoryTest {
     CustomerRepository customerRepository;
 
     @Test
+    @Rollback(value = false)
+    void testDeleteCustomer() {
+        // 바로 삭제하는 것 보다 조회를 하고 삭제하는게 좋음
+        // findById() 혹은 findByCustomerId()로 DB에서 조회하기
+        Customer customer = customerRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Customer Not Found"));
+        // 조회 후 삭제
+        customerRepository.delete(customer);
+    }
+
+    @Test
     @Rollback(value = false) // Rollback 하지 말고 Commit 해서 업데이트 해라
-    void testUpdateCustomer(){
+    void testUpdateCustomer() {
         /** Entity 클래스에 @DynamicUpdate 어노테이션 추가
          * @DynamicUpdate 추가하기 전:
          *      Hibernate: update customers set customer_id=?,customer_name=? where id=?
