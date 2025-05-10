@@ -16,20 +16,37 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-@Transactional
+@Transactional //Controller 클래스에서 사용 불가
 //@DataJpaTest
 class CustomerRepositoryTest {
     @Autowired
     CustomerRepository customerRepository;
 
     @Test
+    @Rollback(value = false) // Rollback 하지 말고 Commit 해서 업데이트 해라
     void testUpdateCustomer(){
+        /** Entity 클래스에 @DynamicUpdate 어노테이션 추가
+         * @DynamicUpdate 추가하기 전:
+         *      Hibernate: update customers set customer_id=?,customer_name=? where id=?
+         * @DynamicUpdate 추가한 후:
+         *     Hibernate: update customers set customer_name=? where id=?
+         * 기본적으로 Hibernate는 모든 필드를 포함해서 UPDATE 쿼리 생성
+         * @DynamicUpdate를 사용하면 UPDATE 쿼리에서 실제 변경된 컬럼만 포함시켜줌
+         */
+        /** 업데이트 작업 */
+        // 1. 우선 findById()나 findByCustomerId()로 DB에서 읽어와야 함
         Customer customer = customerRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Customer Not Found"));
-        // 수정하려면 Entity의 Setter Method를 호출
-        customer.setCustomerName("스프링부트");
-        customerRepository.save(customer);
-        assertThat(customer.getCustomerName()).isEqualTo("스프링부트");
+
+        // 2. Setter 메서드로 값을 수정하면 @Transaction 어노테이션 때문에 즉시 값이 저장됨
+        customer.setCustomerName("홍길동");
+
+        // 3. @Transactional 어노테이션을 선언하지 않았으면 반드시 save()를 해줘야 함
+            // save() 안해도 @Transactional 때문에 Update 되는 걸 "Dirty Checking"이라 함
+        // customerRepository.save(customer);
+
+        // 4. 수정되었는지 확인해본다
+        assertThat(customer.getCustomerName()).isEqualTo("홍길동");
 
     }
 
