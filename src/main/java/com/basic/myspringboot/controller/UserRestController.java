@@ -78,28 +78,65 @@ public class UserRestController {
     public User create(@RequestBody User user) {
         return userRepository.save(user);
     }
-    /**Postman 사용법
-    Post Man에서 POST로 드롭박스를 바꾸고 텍스트필드에 http://localhost:8080/api/users 입력 후
-    Headers 메뉴에서 Key를 Content-Type으로 Value를 application/json으로 설정
-    Body 메뉴에서 라디오버튼 중 raw 선택 후 JSON으로 변경(Headers 메뉴에서 Content-Type을 application/json으로 설정해서 JSON이 기본 값)후
-    {
-     "name":"스프링",
-     "email":"spring@a.com"
-    }
-    라는 JSON 데이터를 넣어주고 http://localhost:8080/api/users를 넣은 텍스트필드의 오른쪽에 있는 Send 버튼을 클릭하면
-    밑의 Body 메뉴에
-    {
-        "id": 1,
-        "name": "스프링",
-        "email": "spring@a.com",
-        "createdAt": "2025-05-12T07:29:34.523809"
-    }
-    가 들어가면서 자동으로 내 users 테이블에 값 저장됨
-    */
+    /**
+     * Postman 사용법 - POST 요청
+     *
+     * 1. 요청 방식(Method)을 POST로 설정
+     * 2. 주소창에 http://localhost:8080/api/users 입력
+     * 3. Headers 탭에서 다음 설정 추가:
+     *    - Key: Content-Type
+     *    - Value: application/json
+     * 4. Body 탭에서:
+     *    - raw 라디오 버튼 선택
+     *    - 우측 드롭다운에서 JSON 선택
+     *    - 아래와 같은 JSON 데이터 입력:
+     *      {
+     *        "name": "스프링",
+     *        "email": "spring@a.com"
+     *      }
+     * 5. Send 버튼 클릭
+     *
+     * 응답 결과:
+     * {
+     *     "id": 1,
+     *     "name": "스프링",
+     *     "email": "spring@a.com",
+     *     "createdAt": "2025-05-12T07:29:34.523809"
+     * }
+     *
+     * 이 데이터는 users 테이블에 자동으로 저장됨
+     */
 
     @GetMapping
     public List<User> getUsers() {
         return userRepository.findAll();
     }
+    /**
+     * Postman 사용법 - GET 요청
+     *
+     * 1. 요청 방식(Method)을 GET으로 설정
+     * 2. 주소창에 http://localhost:8080/api/users 입력
+     * 3. Send 버튼 클릭
+     *
+     * 응답 결과 :
+     * [
+     *     {
+     *         "id": 1,
+     *         "name": "스프링",
+     *         "email": "spring@a.com",
+     *         "createdAt": "2025-05-12T07:29:34.523809"
+     *     },
+     *     {
+     *         "id": 2,
+     *         "name": "스프링2",
+     *         "email": "spring2@a.com",
+     *         "createdAt": "2025-05-12T08:13:32.63707"
+     *     }
+     * ]
+     *
+     * - `[]`는 전체 결과를 나타내는 리스트(List)
+     * - `{}`는 각각의 사용자(User) 객체를 나타냄
+     * - DB에 저장된 User가 많아지면 리스트 안에 여러 개의 User 객체가 포함됨
+     */
 
 }
