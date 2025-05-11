@@ -1,17 +1,20 @@
 package com.basic.myspringboot.controller;
 
+import com.basic.myspringboot.entity.User;
 import com.basic.myspringboot.repository.CustomerRepository;
 import com.basic.myspringboot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 //@RestController = @Controller + @ResponseBody
 @RestController
 @RequiredArgsConstructor //final인 변수를 초기화하는 생성자를 자동으로 생성해주는 역할을 하는 lombok 어노테이션
-@RequestMapping("/api/users")
+@RequestMapping("/api/users") //"/api/users"라는 요청이 URL로 들어오면 UserRestController가 동작함
 public class UserRestController {
     /**
      * Constructor Injection & Lombok 자동 생성자 주입 설명
@@ -46,5 +49,11 @@ public class UserRestController {
      * 그래서 테스트 코드에서는 보통 생성자 주입(Constructor Injection)을 사용함
      * 이는 테스트 시 Mock 객체를 명확하게 주입하기 더 적합하고 테스트 코드가 더 유연해짐
      */
+
+    //Request Mapping
+    @PostMapping
+    public User create(@RequestBody User user) {
+        return userRepository.save(user);
+    }
 
 }
