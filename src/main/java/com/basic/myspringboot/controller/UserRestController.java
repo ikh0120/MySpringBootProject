@@ -6,9 +6,13 @@ import com.basic.myspringboot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.repository.Repository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * HTTP POST 요청을 처리하는 메서드
@@ -37,7 +41,9 @@ import java.util.List;
 //@RestController = @Controller + @ResponseBody
 @RestController
 @RequiredArgsConstructor //final인 변수를 초기화하는 생성자를 자동으로 생성해주는 역할을 하는 lombok 어노테이션
-@RequestMapping("/api/users") //"/api/users"라는 요청이 URL로 들어오면 UserRestController가 동작함
+//"/api/users"라는 요청이 URL로 들어오면 UserRestController가 동작함
+//여기서 @GetMapping("/api/users")를 넣으면 앞에 @RequestMapping에 넣은 값이 들어와서 @GetMapping("/api/users/api/users")로 들어옴
+@RequestMapping("/api/users")
 public class UserRestController {
     /**
      * Constructor Injection & Lombok 자동 생성자 주입 설명
@@ -139,4 +145,17 @@ public class UserRestController {
      * - DB에 저장된 User가 많아지면 리스트 안에 여러 개의 User 객체가 포함됨
      */
 
+    /**
+     * GET /api/users/{id} 요청 처리
+     * @PathVariable: URL 경로에서 {id} 값을 받아 매개변수로 바인딩
+     */
+    /**
+     * ResponseEntity:
+     *      Body + Http Status Code + Response Headers까지 한번에 담아서 응답을 주는 객체
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id){
+        Optional<User> optionalUser = userRepository.findById(id);
+
+    }
 }
