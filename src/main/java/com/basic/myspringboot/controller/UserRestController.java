@@ -143,6 +143,26 @@ public class UserRestController {
      */
 
     /**
+     * Optional<T> 정리본
+         *
+         * Optional<T>란
+         *      값이 있을 수도 있고, 없을 수도 있는 값(T)을 감싸는 래퍼(wrapper)객체이다
+         *
+         * Optional<T> Methods:
+         *     isPresent(); // 값이 있으면 true 반환
+         *     ifPresent(consumer); // 값이 있으면 실행
+         *     isEmpty(); // 값이 없으면 true 반환 (Java 11+)
+         *     get(); // 값 꺼냄 (값 없으면 예외 발생 - 사용 지양)
+         *     map(func); // 값이 있으면 func 적용 후 Optional로 반환
+         *     flatMap(func); // 중첩 Optional을 평평하게 풀어서 반환
+         *
+         * if(Optional<T>.isEmpty()==true):
+         *     orElse(T); // Optional에 값이 있으면 무시, 없으면 항상 실행 → 기본값(T) 반환
+         *     orElseGet(() -> T); // Optional에 값이 있으면 무시, 없으면 실행 → 기본값(T) 반환
+         *     orElseThrow(() -> 예외); // Optional에 값이 있으면 무시, 없으면 실행 → 예외 발생
+     */
+
+    /**
      * GET /api/users/{id} 요청 처리
      * @PathVariable: URL 경로에서 {id} 값을 받아 매개변수로 바인딩
      */
@@ -186,5 +206,7 @@ public class UserRestController {
                     //.orElse(ResponseEntity.notFound().build()); //optionalUser에 User객체가 없는 경우: status code = 404
                     .orElse(new ResponseEntity("User Not Found", HttpStatus.NOT_FOUND));
         return responseEntity;
+
+        /**4. 위처럼 HttpStatus code와 단순 메세지 말고 JSON 데이터로 전달하기*/
     }
 }
