@@ -4,6 +4,7 @@ import com.basic.myspringboot.entity.User;
 import com.basic.myspringboot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Not;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -152,14 +153,16 @@ public class UserRestController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id){
         Optional<User> optionalUser = userRepository.findById(id);
-
+/*
         // public <U> Optional<U> map(Function<? super T, ? extends U> mapper)
         // Function의 추상메서드 R apply(T t)
         // orElse(): Optional 객체 안의 값이 없으면 이걸 반환해라
+ */
 //        ResponseEntity<User> responseEntity = optionalUser
 //                .map(user -> ResponseEntity.ok(user)) //optionalUser에 User 객체가 들어있는 경우: status code = 200
-//                    .orElse(ResponseEntity.notFound().build()); //optionalUser에 User객체가 없는 경우: status code = 404
-//        return responseEntity;
+//                    //.orElse(ResponseEntity.notFound().build()); //optionalUser에 User객체가 없는 경우: status code = 404
+//                    .orElse(new ResponseEntity("User Not Found", HttpStatus.NOT_FOUND));
+        return responseEntity;
         /**
          * responseEntity의 return값
          *
