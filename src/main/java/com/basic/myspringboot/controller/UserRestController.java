@@ -1,13 +1,9 @@
 package com.basic.myspringboot.controller;
 
 import com.basic.myspringboot.entity.User;
-import com.basic.myspringboot.repository.CustomerRepository;
 import com.basic.myspringboot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.repository.Repository;
-import org.springframework.http.HttpStatus;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -157,5 +153,25 @@ public class UserRestController {
     public ResponseEntity<User> getUserById(@PathVariable Long id){
         Optional<User> optionalUser = userRepository.findById(id);
 
+        // public <U> Optional<U> map(Function<? super T, ? extends U> mapper)
+        // Function의 추상메서드 R apply(T t)
+        // orElse(): Optional 객체 안의 값이 없으면 이걸 반환해라
+        ResponseEntity<User> responseEntity = optionalUser
+                .map(user -> ResponseEntity.ok(user)) //optionalUser에 User 객체가 들어있는 경우: status code = 200
+                    .orElse(ResponseEntity.notFound().build()); //optionalUser에 User객체가 없는 경우: status code = 404
+        //return responseEntity;
+        /**
+         * responseEntity의 return값
+         *
+         * if(optionalUser.isPresent()==True) { //Optinal<User>안에 User 객체가 존재할 때
+         *      return ResponseEntity<User>, HTTP.status_code=200 OK, body=optionalUser.get();
+         * }
+         * else {
+         *      return ResponseEntity<User>, HTTP.statusCode = 404 Not Found, body = null;
+         * }
+         */
+        //가장 축약한 버전
+        return optionalUser.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
