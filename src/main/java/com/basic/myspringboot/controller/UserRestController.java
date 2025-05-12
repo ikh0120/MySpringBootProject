@@ -164,9 +164,6 @@ public class UserRestController {
      */
 
 
-
-
-
     /**
      * GET /api/users/{id} 요청 처리
      * @PathVariable: URL 경로에서 {id} 값을 받아 매개변수로 바인딩
