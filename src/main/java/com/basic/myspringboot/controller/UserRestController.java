@@ -162,7 +162,7 @@ public class UserRestController {
 //                .map(user -> ResponseEntity.ok(user)) //optionalUser에 User 객체가 들어있는 경우: status code = 200
 //                    //.orElse(ResponseEntity.notFound().build()); //optionalUser에 User객체가 없는 경우: status code = 404
 //                    .orElse(new ResponseEntity("User Not Found", HttpStatus.NOT_FOUND));
-        return responseEntity;
+//        return responseEntity;
         /**
          * responseEntity의 return값
          *
