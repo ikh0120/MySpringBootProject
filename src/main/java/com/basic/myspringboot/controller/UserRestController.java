@@ -1,6 +1,7 @@
 package com.basic.myspringboot.controller;
 
 import com.basic.myspringboot.entity.User;
+import com.basic.myspringboot.exception.BusinessException;
 import com.basic.myspringboot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Not;
@@ -162,6 +163,10 @@ public class UserRestController {
          *     orElseThrow(() -> 예외); // Optional에 값이 있으면 무시, 없으면 실행 → 예외 발생
      */
 
+
+
+
+
     /**
      * GET /api/users/{id} 요청 처리
      * @PathVariable: URL 경로에서 {id} 값을 받아 매개변수로 바인딩
@@ -206,7 +211,20 @@ public class UserRestController {
                     //.orElse(ResponseEntity.notFound().build()); //optionalUser에 User객체가 없는 경우: status code = 404
                     .orElse(new ResponseEntity("User Not Found", HttpStatus.NOT_FOUND));
         return responseEntity;
-
-        /**4. 위처럼 HttpStatus code와 단순 메세지 말고 JSON 데이터로 전달하기*/
     }
+
+    /**4. 위처럼 HttpStatus code와 단순 메세지 말고 JSON 데이터로 전달하기*/
+    // "/email/{email}/"과 "/email/{email}"은 슬래시 유무로 다른 경로로 취급되어 404 에러가 발생할 수 있다
+    // 따라서 일관성을 위해 슬래시를 뒤에 붙이는 것이 더 안전하다
+    @GetMapping("/email/{email}/")  // http://localhost:8080/api/users/email/spring@a.com/
+    public User getUserByEmail(@PathVariable String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        User existUser = optionalUser
+                .orElseThrow(() -> new BusinessException("User Not Found", HttpStatus.NOT_FOUND));
+
+        return existUser;
+    }
+
+
 }
