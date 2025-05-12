@@ -158,6 +158,7 @@ public class UserRestController {
         // Function의 추상메서드 R apply(T t)
         // orElse(): Optional 객체 안의 값이 없으면 이걸 반환해라
  */
+        /**1. 가장 기본*/
 //        ResponseEntity<User> responseEntity = optionalUser
 //                .map(user -> ResponseEntity.ok(user)) //optionalUser에 User 객체가 들어있는 경우: status code = 200
 //                    .orElse(ResponseEntity.notFound().build()); //optionalUser에 User객체가 없는 경우: status code = 404
@@ -173,13 +174,13 @@ public class UserRestController {
          *      return ResponseEntity<User>, HTTP.statusCode = 404 Not Found, body = null;
          * }
          */
-        //가장 lambda 식을 많이 사용한 버전
+        /**2. 가장 짧은 버전*/
+        /**가장 lambda 식을 많이 사용한 버전*/
 //        return optionalUser.map(ResponseEntity::ok)
 //                .orElse(ResponseEntity.notFound().build());
 
-        //optionalUser가 없을 때 body 값을 주고 싶을 경우
 
-        /**HttpStatus가 404일 때 body에 단순한 메세지("User Not Found") 추가*/
+        /**3. optionalUser의 HttpStatus가 404일 때 body에 단순한 메세지("User Not Found") 추가*/
         ResponseEntity<User> responseEntity = optionalUser
                 .map(user -> ResponseEntity.ok(user)) //optionalUser에 User 객체가 들어있는 경우: status code = 200
                     //.orElse(ResponseEntity.notFound().build()); //optionalUser에 User객체가 없는 경우: status code = 404
