@@ -226,6 +226,7 @@ public class UserRestController {
         return getExistUser(optionalUser);
     }
 
+    /**내가 작성한 @PutMapping을 사용한 updateUser() */
 //    @PutMapping("/{id}")
 //    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user_detail){
 //        User resultUser = userRepository.findById(id).map(user -> {
@@ -263,7 +264,9 @@ public class UserRestController {
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         User user = getExistUser(userRepository.findById(id));
         userRepository.delete(user);
-        //return ResponseEntity.ok(user);
-        return ResponseEntity.ok().build();
+        // return ResponseEntity.ok("User가 삭제되었습니다. ");
+
+        // HTTP 204 NO CONTENT 요청은 성공했지만 응답은 없음
+        return ResponseEntity.noContent().build();
     }
 }
