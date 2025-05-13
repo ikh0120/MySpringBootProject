@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 public class BusinessException extends RuntimeException {	
     private static final long serialVersionUID = 1L;
     private String message;
-    private HttpStatus httpStatus;
+    private HttpStatus httpStatus; //Spring의 Http 상태 코드
 
     public BusinessException(String message) {
         // HttpStatus.EXPECTATION_FAILED: 417
