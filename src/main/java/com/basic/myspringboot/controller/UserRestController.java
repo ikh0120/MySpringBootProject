@@ -264,9 +264,9 @@ public class UserRestController {
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         User user = getExistUser(userRepository.findById(id));
         userRepository.delete(user);
-
         // HTTP 204 NO CONTENT 요청은 성공했지만 응답은 없음
-//        return ResponseEntity.noContent().build(); //HttpRepuest: 204
-         return ResponseEntity.ok("User가 삭제되었습니다. "); //HttpRequest:200
+        //return ResponseEntity.noContent().build(); //http status Code: 204
+        return ResponseEntity.ok("User가 삭제되었습니다. "); //Http status 200
+
     }
 }
