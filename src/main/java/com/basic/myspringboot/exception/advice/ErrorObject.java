@@ -16,6 +16,6 @@ public class ErrorObject {
         LocalDateTime ldt = LocalDateTime.now();
         return DateTimeFormatter.ofPattern(
                 "yyyy-MM-dd HH:mm:ss E a",
-                Locale.KOREA).format(ldt);
+                Locale.KOREAN).format(ldt); //Locale.CHINA, Locale.JAPAN 등도 됨
     }
 }

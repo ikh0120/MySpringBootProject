@@ -223,5 +223,35 @@ public class UserRestController {
         return existUser;
     }
 
+//    @PutMapping("/{id}")
+//    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user_detail){
+//        User resultUser = userRepository.findById(id).map(user -> {
+//            user.setName(user_detail.getName());
+//            user.setEmail(user_detail.getEmail());
+//            User updateUser = userRepository.save(user);
+//            return updateUser;
+//        }).orElseGet(() -> {
+//            User createNewUser = userRepository.save(user_detail);
+//
+//            return createNewUser;
+//        });
+//
+//        return new ResponseEntity<>(resultUser, HttpStatus.OK);
+//
+//    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetail){
+        User existUser = userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("User Not Found", HttpStatus.NOT_FOUND));
+        //Setter method 호출
+        existUser.setName(userDetail.getName());
+
+//        User updatedUser = userRepository.save(existUser);
+//        return ResponseEntity.ok(updatedUser);
+
+        return ResponseEntity.ok(userRepository.save(existUser));
+
+    }
 
 }

@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+// 에러를 처리 할 수 있는 코드를 넣으면 같은 에러가 나는 곳 모두를 처리할수 있음
+// AOP(Aspect-Oriented-Programming): 전역적 부가 기능
 @RestControllerAdvice
-@Slf4j
+@Slf4j //Lombok 어노테이션
 public class DefaultExceptionAdvice {
 
     @ExceptionHandler(BusinessException.class)
