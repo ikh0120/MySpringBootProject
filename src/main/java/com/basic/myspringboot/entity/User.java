@@ -1,6 +1,7 @@
 package com.basic.myspringboot.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
@@ -28,11 +29,14 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    @NotEmpty(message = "Name은 필수 입력 항목입니다. ")
+    //@NotEmpty: white space(공백) 허용
+    @NotBlank(message = "Name은 필수 입력 항목입니다. ")
     private String name;
 
     @Column(unique = true, nullable = false)
+    //@NotBlank: trim() + @NotEmpty //trim(): 문자열 공백 제거
     @NotBlank(message = "Email은 필수 입력 항목입니다. ")
+    @Email //이메일 형식 체크
     private String email;
 
     // 자동으로 User 객체가 생성될 때 현재 시간을 넣도록 설정
