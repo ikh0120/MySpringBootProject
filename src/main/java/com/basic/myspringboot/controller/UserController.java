@@ -1,10 +1,15 @@
 package com.basic.myspringboot.controller;
 
+import com.basic.myspringboot.entity.User;
 import com.basic.myspringboot.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller //@RestController(=@ResponseBody + @Controller)가 아닌 그냥 @Controller
 public class UserController {
@@ -19,6 +24,23 @@ public class UserController {
         // ==> Key: users, Value: userRepository.findAll()
         model.addAttribute("users", userRepository.findAll());
         return "index"; // 3) templates/index.html로 이동
+    }
+
+    @GetMapping("/signup")
+    public String showSignupForm(@ModelAttribute("userForm") User user) { //@ModelAttribute가 없다면 User 클래스에서 첫 글자만 소문자로 바꾸고 들어감
+        return "add-user";
+    }
+
+    @PostMapping("/adduser")
+    public String addUser(@Valid @ModelAttribute("userForm") User user,
+                          BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "add-user";
+        }
+        userRepository.save(user);
+        model.addAttribute("users", userRepository.findAll());
+        return "index";
+        //return "redirect:/index";
     }
 
     @GetMapping("/thymeleaf")
