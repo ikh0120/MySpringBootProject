@@ -6,10 +6,12 @@
   <tr>
     <th>Name</th>
     <th>Email</th>
+    <th>Date</th>
   </tr>
-  <tr th:each="user : ${users}">
-    <td th:text="${user.name}"></td>
-    <td th:text="${user.email}"></td>
+  <tr th:each="user : ${users}"> <!-- users: UserController에서 Model로 저장한 Key -->
+    <td th:text="${user.name}"></td> <!-- users.name: Value -->
+    <td th:text="${user.email}"></td> <!-- user.email: Value -->
+    <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd hh:mm E a')}"></td>
   </tr>
 </table>
 </body>
