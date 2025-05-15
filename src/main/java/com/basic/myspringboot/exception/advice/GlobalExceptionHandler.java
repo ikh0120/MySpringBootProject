@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/** @NotBlank(입력항목을 처리하는 어노테이션)에서 오류가 생길 때 처리하기 위한 핸들러 추가*/
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
