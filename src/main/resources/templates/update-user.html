@@ -7,9 +7,11 @@
     <label for="name">Name</label>
     <input type="text" th:field="*{name}" id="name">
     <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span> <br/>
+
     <label for="email">Email</label>
-    <input type="text" th:field="*{email}" id="email" readonly>
+    <input type="text" th:field="*{email}" id="email" readonly><!-- unique=true 속성인 email을 고치지 못하게 하려면 readonly 추가 -->
     <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span> <br/>
+
     <input type="submit" value="Update User">
 </form>
 </body>
