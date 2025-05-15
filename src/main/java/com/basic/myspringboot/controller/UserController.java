@@ -20,7 +20,7 @@ public class UserController {
 
     // 2) static/index.html에서 넘어옴
     @GetMapping("/index")
-    public String index(Model model){
+    public String index(Model model) {
         // UserRepository를 injection 받음
         // userRepository의 findAll()을 사용해서 가져온 값들을 users라는 키 값에 저장
         // ==> Key: users, Value: userRepository.findAll()
@@ -55,6 +55,7 @@ public class UserController {
         model.addAttribute("user", user);
         return "update-user";
     }
+
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id,
                              @Valid @ModelAttribute("user") User user,
@@ -67,6 +68,13 @@ public class UserController {
         return "redirect:/index";
     }
 
+
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") long id, Model model) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+        userRepository.delete(user);
+        return "redirect:/index";
+    }
 
     @GetMapping("/thymeleaf")
     public String leaf(Model model) { //Model 객체: Spring Framework에서 UI 상에서 쓸 데이터를 저장해주는 객체
