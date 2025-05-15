@@ -26,9 +26,11 @@
     <label for="email">Email</label>
     <input type="text" th:field="*{email}" id="email"><!-- th:field가 "email"이라는 값의 id, name 속성값을 넣어주고 value값에는 현재 바인딩 된 email값을 만들기에 id="email"은 안써도 상관 없음 -->
 <!--    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>-->
-    <ul>
-        <li th:each="err : ${#fields.errors('email')}" th:text="${err}" />
-    </ul>
+    <div th:if="${#fields.hasErrors('email')}"> <!-- 'email' 필드에 error가 있을 때만 작동 -->
+        <ul>
+            <li th:each="err : ${#fields.errors('email')}" th:text="${err}" />
+        </ul>
+    </div>
     <br/>
     <input type="submit" value="Add User">
 </form>
