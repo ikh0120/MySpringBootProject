@@ -5,10 +5,7 @@ import com.basic.myspringboot.entity.User;
 import com.basic.myspringboot.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +23,4 @@ public class UserServiceController {
         User savedUser = userService.createUser(user);
         return new UserDTO.UserResponse(savedUser);
     }
-
-
-
 }
