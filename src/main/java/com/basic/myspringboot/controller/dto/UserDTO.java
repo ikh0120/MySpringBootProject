@@ -9,7 +9,8 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 public class UserDTO {
-    
+
+    //등록 입력
     @Getter
     @Setter
     public static class UserCreateRequest {
@@ -19,7 +20,8 @@ public class UserDTO {
         @NotBlank(message = "Email 은 필수 입력항목입니다.")
         private String email;
     }
-    
+
+    //수정 입력
     @Getter
     @Setter
     public static class UserUpdateRequest {
@@ -27,6 +29,7 @@ public class UserDTO {
         private String name;
     }
     
+    //조회 출력
     @Getter
     public static class UserResponse {
         private Long id;
