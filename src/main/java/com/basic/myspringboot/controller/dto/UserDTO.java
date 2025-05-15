@@ -14,10 +14,10 @@ public class UserDTO {
     @Getter
     @Setter
     public static class UserCreateRequest {
-        @NotBlank(message = "Name 은 필수 입력항목입니다.")
+        @NotBlank(message = "Name 은 필수 입력 항목입니다.")
         private String name;
         
-        @NotBlank(message = "Email 은 필수 입력항목입니다.")
+        @NotBlank(message = "Email 은 필수 입력 항목입니다.")
         private String email;
     }
 
@@ -25,7 +25,7 @@ public class UserDTO {
     @Getter
     @Setter
     public static class UserUpdateRequest {
-        @NotBlank(message = "Name 은 필수 입력항목입니다.")
+        @NotBlank(message = "Name 은 필수 입력 항목입니다.")
         private String name;
     }
     

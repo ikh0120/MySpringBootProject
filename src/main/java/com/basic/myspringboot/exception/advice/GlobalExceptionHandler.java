@@ -35,24 +35,34 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         //@Valid 또는 @NotBlank 등 유효성 검사를 실패했을 때 발생하는 예외를 처리
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult()
+                .getAllErrors()
+                .forEach((error) -> {
             // 검증 실패한 필드의 오류 정보를 하나씩 가져옴
-            String fieldName = ((FieldError) error).getField(); // 필드 이름 추출
-            String errorMessage = error.getDefaultMessage(); // 에러 메시지 추출
+            String fieldName = ((FieldError) error).getField(); // 필드(변수) 이름 추출
+            String errorMessage = error.getDefaultMessage(); // 에러 메시지(@NotBlank의 message) 추출
             errors.put(fieldName, errorMessage); // 필드명과 메시지를 map에 저장
         });
 
-        
         ValidationErrorResponse response = new ValidationErrorResponse(
                 400,
-                "Validation Failed",
+                "입력 항목 검증 오류",
                 LocalDateTime.now(),
                 errors
         );
-
+        //badRequests(): 400
         return ResponseEntity.badRequest().body(response); // 400 상태로 응답
     }
 
+//    바로 위 handleValidationExceptions에서 저장한 내용들을 전부 집어넣어 반환
+    @Getter @Setter
+    @AllArgsConstructor
+    public static class ValidationErrorResponse {
+        private int status;              // 상태 코드
+        private String message;          // 메시지
+        private LocalDateTime timestamp; // 발생 시간
+        private Map<String, String> errors; // 검증 실패한 필드별 메시지
+    }
 
     /***내부 클래스 정의*/
     @Getter @Setter
@@ -63,12 +73,5 @@ public class GlobalExceptionHandler {
         private LocalDateTime timestamp; // 발생 시간
     }
 
-    @Getter @Setter
-    @AllArgsConstructor
-    public static class ValidationErrorResponse {
-        private int status;              // 상태 코드
-        private String message;          // 메시지
-        private LocalDateTime timestamp; // 발생 시간
-        private Map<String, String> errors; // 검증 실패한 필드별 메시지
-    }
+
 }
