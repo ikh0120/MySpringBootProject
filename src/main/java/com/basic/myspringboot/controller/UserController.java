@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult; //BindingResult가 Errors�
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller //@RestController(=@ResponseBody + @Controller)가 아닌 그냥 @Controller
@@ -45,6 +46,26 @@ public class UserController {
         return "index";
         //return "redirect:/index";
     }
+
+    @GetMapping("/edit/{id}")
+    public String showUpdateForm(@PathVariable("id") long id, Model model) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+        model.addAttribute("user", user);
+        return "update-user";
+    }
+    @PostMapping("/update/{id}")
+    public String updateUser(@PathVariable("id") long id,
+                             @Valid @ModelAttribute("user") User user,
+                             BindingResult result) {
+        if (result.hasErrors()) {
+            user.setId(id);
+            return "update-user";
+        }
+        userRepository.save(user);
+        return "redirect:/index";
+    }
+
 
     @GetMapping("/thymeleaf")
     public String leaf(Model model) { //Model 객체: Spring Framework에서 UI 상에서 쓸 데이터를 저장해주는 객체
