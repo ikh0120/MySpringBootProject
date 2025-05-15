@@ -5,6 +5,7 @@ import com.basic.myspringboot.exception.BusinessException;
 import com.basic.myspringboot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Not;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,7 @@ import java.util.Optional;
 //"/api/users"라는 요청이 URL로 들어오면 UserRestController가 동작함
 //여기서 @GetMapping("/api/users")를 넣으면 앞에 @RequestMapping에 넣은 값이 들어와서 @GetMapping("/api/users/api/users")로 들어옴
 @RequestMapping("/api/users")
+@Profile("test")
 public class UserRestController {
     /**
      * Constructor Injection & Lombok 자동 생성자 주입 설명
