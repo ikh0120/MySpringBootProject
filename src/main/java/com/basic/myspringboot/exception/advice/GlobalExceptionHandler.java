@@ -28,7 +28,8 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
     }
-    
+
+    //입력 항목 검증할때 오류 발생 시 동작하는 메서드
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
