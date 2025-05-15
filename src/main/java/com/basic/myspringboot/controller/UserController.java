@@ -6,7 +6,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.BindingResult; //BindingResult가 Errors의 하위 클래스임
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,9 +33,11 @@ public class UserController {
     }
 
     @PostMapping("/adduser")
+    //@Valid: 유효성 검사(값을 잘 입력했냐 아니냐) 수행 //Validator 클래스가 내부에서 만들어 지고 호출하는 역할
+    //Errors: 에러가 발생했을 때 에러 정보 저장(어떠한 항목에 Error가 생겼다, 사용자 지정 에러 메세지는 뭐다)
     public String addUser(@Valid @ModelAttribute("userForm") User user,
-                          BindingResult result, Model model) {
-        if (result.hasErrors()) {
+                          Errors result, Model model) {
+        if (result.hasErrors()) { //에러 정보가 있다면 add-user.html로 이동
             return "add-user";
         }
         userRepository.save(user);

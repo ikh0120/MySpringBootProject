@@ -4,13 +4,31 @@
 <body>
 <h2>User 등록</h2>
 <form action="#" th:action="@{/adduser}" th:object="${userForm}" method="post">
+    <!-- label : 텍스트 필드 입력 시 직접 클릭해야 하는데 Name을 클릭해도 텍스트 필드 클릭과 같음 -->
+    <!-- for="name": id="name"인 것을 가리킴 -->
     <label for="name">Name</label>
+    <!--
+        - th:field : id, name, value 3가지 속성을 만들어 줌
+        - id를 지정해 준 이유: label에서 for="name"으로 지정해야 해서 넣어 줌
+        - th:field에 저장 된 *{name}: User.java에 저장 된 필드명(name)과 매칭됨
+        - id 속성에 저장 된 "name": User.java의 name 필드 이름
+    -->
     <input type="text" th:field="*{name}" id="name">
+    <!--
+        th:if="${#fields.hasErrors('name')}":
+            name 필드에 오류가 났느냐 물어보는 것
+        th:errors="*{name}":
+            @NotBlank(message = "Name은 필수 입력 항목입니다. ")의 message 속성값을 가져옴
+    -->
     <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
     <br/>
+
     <label for="email">Email</label>
-    <input type="text" th:field="*{email}" id="email">
-    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+    <input type="text" th:field="*{email}" id="email"><!-- th:field가 "email"이라는 값의 id, name 속성값을 넣어주고 value값에는 현재 바인딩 된 email값을 만들기에 id="email"은 안써도 상관 없음 -->
+<!--    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>-->
+    <ul>
+        <li th:each="err : ${#fields.errors('email')}" th:text="${err}" />
+    </ul>
     <br/>
     <input type="submit" value="Add User">
 </form>
