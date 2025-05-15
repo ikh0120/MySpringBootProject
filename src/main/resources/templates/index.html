@@ -4,13 +4,14 @@
 <body>
 <table>
     <tr>
-        <th>Name</th> <th>Email</th> <th>Date</th> <th>Edit</th>
+        <th>Name</th> <th>Email</th> <th>Date</th> <th>Edit</th> <th>Delete</th>
     </tr>
     <tr th:each="user : ${users}"> <!-- users: UserController.java의 index 메서드에서 Model로 저장한 Key -->
         <td th:text="${user.name}"></td> <!-- users.name: Value -->
         <td th:text="${user.email}"></td> <!-- user.email: Value -->
         <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd hh:mm E a')}"></td>
         <td><a th:href="@{/edit/{id}(id=${user.id})}">update</a></td>
+        <td><a th:href="@{/delete/{id}(id=${user.id})}">delete</a></td>
     </tr>
 </table>
 <p>
