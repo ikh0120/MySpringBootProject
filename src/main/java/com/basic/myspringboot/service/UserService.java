@@ -23,8 +23,17 @@ public class UserService {
 
     //등록: @Transactional(readonly = true) 해제
     @Transactional
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserDTO.UserResponse createUser(UserDTO.UserCreateRequest request) {
+        //Email 중복 검사
+        userRepository.findByEmail(request.getEmail())
+                .ifPresent( //중복된 이메일이 존재한다면
+                        user -> { //BusinessException을 통해 에러를 출력하라
+                    throw new BusinessException("User with this Email already Exists", HttpStatus.CONFLICT);
+                });
+
+        User user = request.toEntity();
+        User savedUser = userRepository.save(user);
+        return new UserDTO.UserResponse(savedUser);
     }
 
     public User getUserById(Long id) {
