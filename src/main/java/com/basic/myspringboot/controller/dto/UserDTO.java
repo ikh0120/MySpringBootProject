@@ -19,6 +19,14 @@ public class UserDTO {
         
         @NotBlank(message = "Email 은 필수 입력 항목입니다.")
         private String email;
+
+        //UserCreateRequest => User
+        public User toEntity() {
+            User user = new User();
+            user.setName(this.name);
+            user.setEmail(this.email);
+            return user;
+        }
     }
 
     //수정 입력
