@@ -14,8 +14,8 @@ public class UserServiceController {
     private final UserService userService;
 
     @PostMapping
-    public UserDTO.UserResponse create(@Valid @RequestBody //UserDTO.UserCreateRequest의 @NotBlank가 동작하려면 @Valid를 넣어줘야 함
-                                           UserDTO.UserCreateRequest request) {
+    public UserDTO.UserResponse create(@Valid //UserDTO.UserCreateRequest의 @NotBlank가 동작하려면 @Valid를 넣어줘야 함
+                                            @RequestBody UserDTO.UserCreateRequest request) {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -23,4 +23,5 @@ public class UserServiceController {
         User savedUser = userService.createUser(user);
         return new UserDTO.UserResponse(savedUser);
     }
+
 }

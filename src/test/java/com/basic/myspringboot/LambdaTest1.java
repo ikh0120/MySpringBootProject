@@ -17,12 +17,38 @@ public class LambdaTest1 {
     @Test
     public void transformUsingStream(){
         List<MyCustomer> customers = List.of(
+                // 각 MyCustomer 클래스 타입의 객체는 id, name, email, phoneNumbers를 가지고 있음
                 new MyCustomer(101, "john", "john@gmail.com", Arrays.asList("397937955", "21654725")),
                 new MyCustomer(102, "smith", "smith@gmail.com", Arrays.asList("89563865", "2487238947")),
                 new MyCustomer(103, "peter", "peter@gmail.com", Arrays.asList("38946328654", "3286487236")),
                 new MyCustomer(104, "kely", "kely@gmail.com", Arrays.asList("389246829364", "948609467"))
         );
 
+        //MyCustomer의 이름 목록(Name List)을 추출하기: List<String>
+        //  List<MyCustomer>를 List<String>으로 이름만 뽑아내고 싶음
+        /*
+         * map(Function<? super T,? extends R> mapper)
+         *  - Function은 입/출력 둘 다 있음
+         *  - Cunsumer는 입력만 있고 출력은 없음
+         *  - Supplier는 입력은 없고 출력만 있음
+         */
+        customers.stream() //List<MyCustomer> => Stream<MyCustomer> 변경
+                // map(Function) Function의 추상 메서드 R apply(T t) //T: customer, R: customer.getName()
+                .map(customer -> customer.getName()) //Stream<Mycustomer> => Stream<String> 변경
+                .toList() //Stream<String> => List<String>
+                .forEach(System.out::println);
+
+        //id가 103번 보다 큰 MyCustomer의 이름을 추출해라
+        customers.stream() //List<MyCustomer> => Stream<MyCustomer> 변경
+                .filter(customer -> customer.getId() > 103) //조건 넣기
+                .map(customer -> customer.getName()) //Stream<Mycustomer> => Stream<String> 변경
+                .toList() //Stream<String> => List<String>
+                .forEach(System.out::println);
+
+
+
+
+/*
         //email 주소 목록 List<String>
         List<String> emailList = customers.stream()  //Stream<MyCustomer>
                 .map(cust -> cust.getEmail()) //Stream<String>
@@ -47,8 +73,10 @@ public class LambdaTest1 {
                 .flatMap(customer -> customer.getPhoneNumbers().stream())   //Stream<String>
                 .collect(toList()); //List<String>
         System.out.println("phoneList2 = " + phoneList2);
-
+*/
     }
+
+
     /*
         java.util.function 에 제공하는 함수형 인터페이스
         Consumer -  void accept(T t)
