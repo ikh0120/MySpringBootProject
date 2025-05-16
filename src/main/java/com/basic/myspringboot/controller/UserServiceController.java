@@ -43,6 +43,10 @@ public class UserServiceController {
         return new UserDTO.UserResponse(existUser);
     }
 
+    @GetMapping("/email/{email}")
+    public UserDTO.UserResponse getUserByEmail(@PathVariable String email) {
+        return new UserDTO.UserResponse(userService.getUserByEmail(email));
+    }
 
 
 }
