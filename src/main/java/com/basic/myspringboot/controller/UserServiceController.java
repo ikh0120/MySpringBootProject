@@ -46,13 +46,18 @@ public class UserServiceController {
     }
 
     @PatchMapping("/{email}")
-    public UserDTO.UserResponse updateUser(@PathVariable String email,
+    public ResponseEntity<UserDTO.UserResponse> updateUser(@PathVariable String email,
                                            @Valid @RequestBody UserDTO.UserUpdateRequest userDetail) {
 
-        User updatedUser = userService.updateUserByEmail(email, userDetail);
-        return new UserDTO.UserResponse(updatedUser);
+        UserDTO.UserResponse updatedUser = userService.updateUserByEmail(email, userDetail);
+        return ResponseEntity.ok(updatedUser);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }

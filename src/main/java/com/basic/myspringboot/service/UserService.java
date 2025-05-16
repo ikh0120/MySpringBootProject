@@ -47,12 +47,12 @@ public class UserService {
 
     //수정: @Transactional(readonly = true) 해제
     @Transactional
-    public User updateUserByEmail(String email, UserDTO.UserUpdateRequest userDetail) {
+    public UserDTO.UserResponse updateUserByEmail(String email, UserDTO.UserUpdateRequest userDetail) {
         User user = getUserByEmail(email); //영속 상태
         //dirty read
         user.setName(userDetail.getName()); //변경 감지 대상
         //return userRepository.save(user);
-        return user;
+        return new UserDTO.UserResponse(user);
     }
 
     public User getUserByEmail(String email) {
