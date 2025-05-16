@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -26,22 +27,19 @@ public class LambdaTest1 {
 
         //MyCustomer의 이름 목록(Name List)을 추출하기: List<String>
         //  List<MyCustomer>를 List<String>으로 이름만 뽑아내고 싶음
-        /*
-         * map(Function<? super T,? extends R> mapper)
-         *  - Function은 입/출력 둘 다 있음
-         *  - Cunsumer는 입력만 있고 출력은 없음
-         *  - Supplier는 입력은 없고 출력만 있음
-         */
         customers.stream() //List<MyCustomer> => Stream<MyCustomer> 변경
                 // map(Function) Function의 추상 메서드 R apply(T t) //T: customer, R: customer.getName()
                 .map(customer -> customer.getName()) //Stream<Mycustomer> => Stream<String> 변경
                 .toList() //Stream<String> => List<String>
-                .forEach(System.out::println);
+                .forEach(System.out::println); //for(MyCustomer c : customers.stream().map(customer -> customer.getName()).toList()) { System.out.println(c) }
 
-        //id가 103번 보다 큰 MyCustomer의 이름을 추출해라
+        System.out.println("==============");
+
+        //id가 103번 이상인 MyCustomer의 이름을 추출해라
         customers.stream() //List<MyCustomer> => Stream<MyCustomer> 변경
-                .filter(customer -> customer.getId() > 103) //조건 넣기
-                .map(customer -> customer.getName()) //Stream<Mycustomer> => Stream<String> 변경
+                .filter(customer -> customer.getId() >= 103) //조건 넣기
+//                .map(customer -> customer.getName()) //Stream<Mycustomer> => Stream<String> 변경
+                .map(MyCustomer::getName)
                 .toList() //Stream<String> => List<String>
                 .forEach(System.out::println);
 
