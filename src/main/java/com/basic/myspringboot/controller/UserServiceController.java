@@ -42,4 +42,7 @@ public class UserServiceController {
         User existUser = userService.getUserById(id);
         return new UserDTO.UserResponse(existUser);
     }
+
+
+
 }
