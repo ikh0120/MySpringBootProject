@@ -59,13 +59,40 @@ public class LambdaTest1 {
            UnaryOperator : R apply(T t)
            BinaryOperator : R apply(T t, U u)
     */
+
+
+
     @Test
     public void lambdaTest() {
-        //Functional Interface가 가진 추상 메서드를 재정의할 때 람다식으로 작성하기
+        /** 함수형 인터페이스 Runnable 설명
+         * Runnable 인터페이스는 추상 메서드인 run() 하나만 가지는 인터페이스이다
+         * 자바에서는 @FunctionalInterface를 붙여 람다식으로 구현 가능하게 한다
+         *     package java.lang;
+         *
+         *     @FunctionalInterface
+         *     public interface Runnable {
+         *         public abstract void run();
+         *     }
+         */
+        /** Thread 클래스에 대하여
+         * public Thread(Runnable target)
+         *      Thread의 인자값으로는 Runnable 인터페이스를 구현한 구현 객체만 들어갈 수 있음
+         *      Thread는 자바에서 여러 작업을 동시에 실행할 수 있도록 해주는 클래스임
+         *      즉!!! 멀티스레딩(Multithreading)을 가능하게 해주는 핵심 클래스이다!!!
+         */
 
-        // class MyRunnable implements Runnable => Thread(new MyRunnable())
-        //1. Anonymous Inner Class
-        // class MyRunnable implements Runnable {} - new MyRunnable()
+        /** 0. 직접 클래스를 생성해서 사용하는 방법*/
+        class MyRunnable implements Runnable {
+            @Override
+            public void run() {
+                System.out.println("Make class");
+            }
+        }
+        Thread t0 = new Thread(new MyRunnable()); //Runnable이라는 함수형 인터페이스를 구현한 구현체만 인자로 받을 수 있음
+        t0.start(); //MyRunnable.run() 실행
+
+
+        /**1. Anonymous Inner Class*/
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -74,14 +101,20 @@ public class LambdaTest1 {
         });
         t1.start();
 
-        //2. Lambda Expression
+        /**2. Lambda Expression*/
         Thread t2 = new Thread(() -> System.out.println("Lambda Expression"));
         t2.start();
 
+
+
+
+
         //Iterable 의 forEach(Consumer consumer)
         List<String> stringList = List.of("abc", "java", "boot");
+//        System.out.println(stringList); //출력: [abc, java, boot]
+
         //1. Anonymous Inner Class
-        stringList.forEach(new Consumer<String>() {
+        stringList.forEach(new Consumer<String>() { //List<String>  타입 객체 stringList 값을 하나하나 꺼내줌
             @Override
             public void accept(String s) {
                 System.out.println("s = " + s);
@@ -90,6 +123,7 @@ public class LambdaTest1 {
 
         //2. Lambda Expression
         stringList.forEach(val -> System.out.println(val));
+
         //3. Method Reference
         stringList.forEach(System.out::println);
     }
