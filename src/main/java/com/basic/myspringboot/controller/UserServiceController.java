@@ -52,11 +52,10 @@ public class UserServiceController {
     public UserDTO.UserResponse updateUser(@PathVariable String email,
                                            @Valid @RequestBody UserDTO.UserUpdateRequest userDetail) {
 
-        User user = new User();
-        user.setName(userDetail.getName());
-
-        User updatedUser = userService.updateUserByEmail(email, user);
+        User updatedUser = userService.updateUserByEmail(email, userDetail);
         return new UserDTO.UserResponse(updatedUser);
     }
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.basic.myspringboot.service;
 
+import com.basic.myspringboot.controller.dto.UserDTO;
 import com.basic.myspringboot.entity.User;
 import com.basic.myspringboot.exception.BusinessException;
 import com.basic.myspringboot.repository.UserRepository;
@@ -37,7 +38,7 @@ public class UserService {
 
     //수정: @Transactional(readonly = true) 해제
     @Transactional
-    public User updateUserByEmail(String email, User userDetail) {
+    public User updateUserByEmail(String email, UserDTO.UserUpdateRequest userDetail) {
         User user = getUserByEmail(email); //영속 상태
         //dirty read
         user.setName(userDetail.getName()); //변경 감지 대상
