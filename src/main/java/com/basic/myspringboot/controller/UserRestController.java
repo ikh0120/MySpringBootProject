@@ -64,6 +64,11 @@ public class UserRestController {
 //        this.userRepository = userRepository;
 //    }
 
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "Welcome this endpoint is not secure";
+    }
+
     /** Mockito 라이브러리 설명
      * Mock 객체란 테스트 케이스에서 실제 객체를 대체하는 가짜 객체
      * A가 Controller를 만들고 B가 Repository를 만드는데

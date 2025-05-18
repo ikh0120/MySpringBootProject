@@ -2,6 +2,7 @@ package com.basic.myspringboot.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration //스프링 설정 클리스임을 명시
 @EnableWebSecurity //웹 시큐리티를 활성화시키겠다
@@ -30,18 +33,50 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /**CSRF란
+     * CSRF(Cross-Site Request Forgery): 해커가 사용자 권한을 도용해 원하지 않는 요청을 보내는 공격이다
+     *   CSRF 공격 시나리오
+     *      1) 내가 A라는 은행 웹사이트에 로그인 한 상태라 가정함
+     *      2) 공격자가 나에게 악성 코드가 포함된 사이트(B)의 링크를 클릭하게 유도
+     *      3) B사이트에 방문하면, 자동으로 A 사이트에 요청 전송(ex: "계좌이체 요청")
+     *      4) 쿠키는 브라우저에 자동 포함되므로, 정상 사용자 요청처럼 보임
+     *      5) 서버는 인증된 요청으로 오해하고 처리함
+     *   CSRF 방지 방법
+     *      1. CSRF 토큰 사용(Spring Security 기본 제공)
+     *         - 서버는 매 요청마다 고유한 토큰을 HTML form에 포함
+     *         - 요청 시 이 토큰이 함께 오지 않으면 거부
+     *      2. SameSite 쿠키 설정
+     *         - 브라우저가 외부 사이트에서 쿠키 전송을 제한함
+     *      3. Referer 체크 (요청 출처 검사)
+     *   Spring Security에서의 CSRF
+     *      - 기본적으로 CSRF 방지가 활성화 되어 있음
+     *      - API나 비로그인 서비스에선 보통 .csrf().disable()을 사용해서 끄는 경우도 있음
+     */
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http.csrf(csrf -> csrf.disable()) //csrf 공격 방어 메서드를 비활성화 시키겠다 /**실전에서 절대 이러면 안됨*/
+                .authorizeHttpRequests(auth -> {
+                    //"/api/users/welcome"패스는 인증 없이 접근 가능한 경로이다
+                    auth.requestMatchers("/api/users/welcome").permitAll()
+                            // "/api/users/**"패스는 인증 후에만 접근 가능한 경로이다
+                            .requestMatchers("/api/users/**").authenticated();
+                })
+                //스프링이 제공하는 인증 Form을 사용하겠디
+                .formLogin(withDefaults())
+                .build();
+    }
+
     @Bean
     //Authentication
     public UserDetailsService userDetailsService(PasswordEncoder encoder){
         UserDetails admin = User.withUsername("adminboot")
                 .password(encoder.encode("pwd1"))
-                .roles("ADMIN")
+                .roles("ADMIN")  //관리자
                 .build();
         UserDetails user = User.withUsername("userboot")
-                .password((encoder.encode("pw")))
-                .roles("USER")
+                .password((encoder.encode("pwd2")))
+                .roles("USER")  //일반 사용자
                 .build();
         return new InMemoryUserDetailsManager(admin, user);
     }
-
 }
