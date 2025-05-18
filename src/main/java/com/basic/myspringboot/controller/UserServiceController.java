@@ -29,7 +29,8 @@ public class UserServiceController {
                 //List<User> => Stream<User>
                 .stream()
                 //User -> UserDTO.UserResponse
-                .map(user -> new UserDTO.UserResponse(user))  //.map(UserDTO.UserResponse::new)
+                .map(UserDTO.UserResponse::new)
+//                .map(user -> new UserDTO.UserResponse(user))
                 //Stream<UserResponse> => List<UserResponse>
                 .toList();
     }
