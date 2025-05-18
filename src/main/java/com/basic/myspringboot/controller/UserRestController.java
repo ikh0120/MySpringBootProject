@@ -119,7 +119,9 @@ public class UserRestController {
      */
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')") //관리자(ADMIN)권한이 있는 사용자만 목록 조회 가능ㅇ
+    //관리자(ADMIN)권한이 있는 사용자만 목록 조회 가능 //Path 앞의 ROLE_은 자동으로 붙음
+    //권한이 없는 사용자가 접속하면 403에러와 함께 Access Denied 에러메세지가 뜬다
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<User> getUsers() {
         return userRepository.findAll();
     }
@@ -181,7 +183,9 @@ public class UserRestController {
      *      Body + Http Status Code + Response Headers까지 한번에 담아서 응답을 주는 객체
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')") //일반 사용자(USER) 권한이 있는 사용자만 목록 조회 가능
+    //일반 사용자(USER) 권한이 있는 사용자만 목록 조회 가능 //Path 앞의 ROLE_은 자동으로 붙음
+    //권한이 없는 사용자가 접속하면 403에러와 함께 Access Denied 에러메세지가 뜬다
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<User> getUserById(@PathVariable Long id){
         Optional<User> optionalUser = userRepository.findById(id);
 /*

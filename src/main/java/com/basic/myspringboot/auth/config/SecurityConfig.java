@@ -16,7 +16,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration //스프링 설정 클리스임을 명시
 @EnableWebSecurity //웹 시큐리티를 활성화시키겠다
-@EnableMethodSecurity //권한 체크 //400: 입력 오류, 401: 인증 실패, 403: 권한 없음 
+//400: 입력 오류, 401: 인증 실패, 403: 권한 없음
+//403 error가 아니고 500 error인 이유는 DefaultExceptionAdvice의 handleException()의 HttpStatus.INTERNAL_SERVER_ERROR 때문이다.
+@EnableMethodSecurity //권한 체크
 public class SecurityConfig {
 
     /**BCrypt 알고리즘은 평문으로 문자열을 입력받고 단방향 암호화를 적용해서 해시 문자열로 반환한다.
@@ -64,7 +66,7 @@ public class SecurityConfig {
                             // postman에서 get 요청을 보낼 시 html 마크업 코드가 출력됨 해당 코드는 Username, Password를 입력받고 Submit 버튼이 존재함
                             .requestMatchers("/api/users/**").authenticated();
                 })
-                //스프링이 제공하는 인증 Form을 사용하겠디
+                //스프링이 제공하는 인증 Form을 사용하겠다
                 .formLogin(withDefaults())
                 .build();
     }
