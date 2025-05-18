@@ -14,11 +14,15 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Configuration //스프링 설정 클리스임을 명시
-@EnableWebSecurity //웹 시큐리티를 활성화시키겠다
-//400: 입력 오류, 401: 인증 실패, 403: 권한 없음
-//403 error가 아니고 500 error인 이유는 DefaultExceptionAdvice의 handleException()의 HttpStatus.INTERNAL_SERVER_ERROR 때문이다.
-@EnableMethodSecurity //권한 체크
+/** 개념
+ * Spring Security의 설정 클래스
+ * Http 보안 정책, 로그인 방식, 사용자 인증 로직 설정
+ * PasswordEncoder 빈 등록
+ * 인메모리 사용자 등록(샘플용)
+ */
+@Configuration //스프링 설정 클래스임을 나타냄
+@EnableWebSecurity //Spring Security의 웹 보안을 활성화
+@EnableMethodSecurity //메서드 단위 권한 검사를 활성화
 public class SecurityConfig {
 
     /**BCrypt 알고리즘은 평문으로 문자열을 입력받고 단방향 암호화를 적용해서 해시 문자열로 반환한다.
@@ -32,7 +36,7 @@ public class SecurityConfig {
      * Hash:    Salt값 뒤 나머지 31자리 문자열이 입력 된 평문 문자열을 암호화 한 해시 값이다
      */
 
-    @Bean
+    @Bean //BCryptPasswordEncoder 객체를 빈으로 등록(패스워드 단방향 암호화)
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
@@ -56,32 +60,40 @@ public class SecurityConfig {
      *      - 기본적으로 CSRF 방지가 활성화 되어 있음
      *      - API나 비로그인 서비스에선 보통 .csrf().disable()을 사용해서 끄는 경우도 있음
      */
-    @Bean
+    @Bean //Http 보안 필터 체인을 정의
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable()) //csrf 공격 방어 메서드를 비활성화 시키겠다 /**실전에서 절대 이러면 안됨*/
+        //csrf 공격 방어 메서드를 비활성화 시키겠다 /**실전에서 절대 이러면 안됨 지금은 설정이 빡쎄사 잠깐 이렇게 설정한 것임*/
+        return http.csrf(csrf -> csrf.disable())
+                //요청 별 접근 권한 설정
                 .authorizeHttpRequests(auth -> {
-                    //"/api/users/welcome"패스는 인증 없이 접근 가능한 경로이다
-                    auth.requestMatchers("/api/users/welcome").permitAll()
-                            // "/api/users/**"패스는 인증 후에만 접근 가능한 경로이다.
-                            // postman에서 get 요청을 보낼 시 html 마크업 코드가 출력됨 해당 코드는 Username, Password를 입력받고 Submit 버튼이 존재함
+                        // 해당 경로들은 인정없이 접근 허용
+                    auth.requestMatchers("/api/users/welcome", "/userinfos/new").permitAll()
+                            //해당 경로는 인증 필요
                             .requestMatchers("/api/users/**").authenticated();
                 })
-                //스프링이 제공하는 인증 Form을 사용하겠다
+                //스프링이 제공하는 기본 로그인 Form을 사용하겠다
                 .formLogin(withDefaults())
                 .build();
     }
 
     @Bean
     //Authentication
+    //인메모리 사용자 저장소 빈 등록(실전에서 DB 기반으로 바꿔야 함)
     public UserDetailsService userDetailsService(PasswordEncoder encoder){
-        UserDetails admin = User.withUsername("adminboot")
+        //관리자 계정 생성         //admin.username = "adminboot";
+        UserDetails admin = User.withUsername("adminboot")  // UserDetails => User.UserBuilder
+                //admin.password = encoder.encode("pwd1");
                 .password(encoder.encode("pwd1"))
-                .roles("ADMIN")  //관리자
-                .build();
-        UserDetails user = User.withUsername("userboot")
+                //admin.roles = "ADMIN"; => admin.roles = "ROLE_ADMIN";
+                .roles("ADMIN")
+                .build();   // User.UserBuilder => UserDetails
+        //일반 사용자 계정 생성      // user.username = "userboot";
+        UserDetails user = User.withUsername("userboot")  // UserDetails => User.UserBuilder
+                //user.password = (encoder.encode("pwd2"));
                 .password((encoder.encode("pwd2")))
-                .roles("USER")  //일반 사용자
-                .build();
+                //user.roles = "USER" => user.roles = "ROLE_USER"
+                .roles("USER")
+                .build();   // User.UserBuilder => UserDetails
         return new InMemoryUserDetailsManager(admin, user);
     }
 }

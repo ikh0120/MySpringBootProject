@@ -9,8 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//해당 클래스는 Spring Security의 UserDetails<<interface>>의 구현체이고, UserDetails를 상속받은 User Entity에 값을 저장함
-//UserInfoUserDetailsService -- UserInfoUserDetails
+/**Spring Security가 인증 시 내부적으로 사용하는 사용자 정보 객체(UserDetails 인터페이스) 구현*/
 public class UserInfoUserDetails implements UserDetails {
 
     private String email;
@@ -18,18 +17,31 @@ public class UserInfoUserDetails implements UserDetails {
     private List<GrantedAuthority> authorities;
     private UserInfo userInfo;
 
+    //생성자에서 UserInfo 엔티티를 받아서 내부 필드를 초기화 시킴
     public UserInfoUserDetails(UserInfo userInfo) {
         this.userInfo = userInfo;
-        //UserInfo 엔티티의 이메일 주소를 username 변수에 저장
+
+        //UserInfo 엔티티의 이메일을 username 변수에 저장
         this.email=userInfo.getEmail();
+
         //UserInfo 엔티티의 패스워드를 password 변수에 저장
         this.password=userInfo.getPassword();
+
+
         this.authorities= Arrays.stream(userInfo.getRoles().split(","))
-                .map(SimpleGrantedAuthority::new)
+                //["ROLE_ADMIN", "ROLE_USER"]
+                //.map(SimpleGrantedAuthority::new)
+                .map(roleName -> new SimpleGrantedAuthority(roleName))
+                // => new SimpleGrantedAuthority("ROLE_ADMIN")
+                // => new SimpleGrantedAuthority("ROLE_USER")
                 .collect(Collectors.toList());
+                // => List.of(
+                //      new SimpleGrantedAuthority("ROLE_ADMIN"),
+                //      new SimpleGrantedAuthority("ROLE_USER"),
+                //    };
     }
 
-    @Override
+    @Override //인증 후 권한 리스트 반환
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }

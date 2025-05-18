@@ -54,26 +54,31 @@ import java.util.Optional;
  *      인증 없이 바로 컨트롤러 등으로 요청이 전달됨
  *      => 만약 Authentication이 없거나 잘못되었으면, 인증 과정을 반복함
  */
-@Service
-public class UserInfoUserDetailsService implements UserDetailsService {
-    @Autowired
+/** 개념
+ * UserDetailsService: Spring Security에서 사용자 정보를 DB에서 가져오는 인터페이스임
+ * 로그인 시 username(email)을 받아 DB에서 사용자 정보를 찾아오는 역할
+ * PasswordEncoder는 SecurityConfig에서 new BCryptPasswordEncoder()를 반환값으로 가져 BCrypt 단방향 암호화 알고리즘을 적용하는 것을 알 수 있음
+ */
+@Service //서비스(비즈니스 로직) 컴포넌트
+public class UserInfoUserDetailsService implements UserDetailsService { //Spring Security가 요구하는 UserDetailsService 인터페이스 구현체
+    @Autowired //DB에서 사용자 정보를 조회하기 위해 UserInfoRepository를 주입받음
     private UserInfoRepository repository;
-    @Autowired
+
+    @Autowired //비밀번호 암호화를 위해 SecurityConfig에서 주입받음
     private PasswordEncoder passwordEncoder;
 
-    //로그인 시 사용자가 입력 한 username을 인자로 전달받는다.
-    @Override
+    @Override //로그인 요청 시 입력한 username(email)을 인자로 받아 DB에서 사용자 정보를 조회하는 메서드
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserInfo> optionalUserInfo = repository.findByEmail(username);
-                //입력한 username과 매칭되는 엔티티가 존재한다면 UserInfo 객체를 UserDetail의 구현체인 UserInfoUserDetails 객체로 전달한다
+                //조회 된 UserInfo 엔티티를 Spring Security가 이해할 수 있는 UserDetails 타입으로 변환
         return optionalUserInfo.map(userInfo -> new UserInfoUserDetails(userInfo)) //userInfo.map(UserInfoUserDetails::new)
-                // 입력한 username과 매칭되는 엔티티가 없다면 인증 오류
+                // 입력한 username과 매칭되는 엔티티가 없다면 예외를 발생시켜 인증 실패를 알림
                 .orElseThrow(() -> new UsernameNotFoundException("user not found " + username));
-
     }
 
+    //회원가입 시 호출, 평문 비밀번호를 BCrypt로 단방향 암호화를 진행 한 뒤 DB에 저장함
     public String addUser(UserInfo userInfo) {
-        //패스워드를 인코딩해서 저장
+        //패스워드를 암호화 함
         userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         //UserInfo 엔티티에 username과 password를 DB에 저장
         UserInfo savedUserInfo = repository.save(userInfo);

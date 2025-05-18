@@ -14,6 +14,7 @@ public class UserInfoController {
     @Autowired
     private UserInfoUserDetailsService service;
 
+    //회원가입 API
     @PostMapping("/new")
     public String addNewUser(@RequestBody UserInfo userInfo) {
         return service.addUser(userInfo);
