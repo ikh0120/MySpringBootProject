@@ -17,12 +17,13 @@ public class UserInfo {
     @Column(nullable = false)
     private String name;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false) //email 컬럼으로 인증할거라 unique = true 속성 넣음
     private String email;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
+    //Admin, User
     private String roles;
 }
