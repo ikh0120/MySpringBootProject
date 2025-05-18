@@ -2,6 +2,7 @@ package com.basic.myspringboot.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -15,6 +16,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration //스프링 설정 클리스임을 명시
 @EnableWebSecurity //웹 시큐리티를 활성화시키겠다
+@EnableMethodSecurity //권한 체크 //400: 입력 오류, 401: 인증 실패, 403: 권한 없음 
 public class SecurityConfig {
 
     /**BCrypt 알고리즘은 평문으로 문자열을 입력받고 단방향 암호화를 적용해서 해시 문자열로 반환한다.
@@ -33,7 +35,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /**CSRF란
+    /**CSRF 공격이란
      * CSRF(Cross-Site Request Forgery): 해커가 사용자 권한을 도용해 원하지 않는 요청을 보내는 공격이다
      *   CSRF 공격 시나리오
      *      1) 내가 A라는 은행 웹사이트에 로그인 한 상태라 가정함
@@ -58,7 +60,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     //"/api/users/welcome"패스는 인증 없이 접근 가능한 경로이다
                     auth.requestMatchers("/api/users/welcome").permitAll()
-                            // "/api/users/**"패스는 인증 후에만 접근 가능한 경로이다
+                            // "/api/users/**"패스는 인증 후에만 접근 가능한 경로이다.
+                            // postman에서 get 요청을 보낼 시 html 마크업 코드가 출력됨 해당 코드는 Username, Password를 입력받고 Submit 버튼이 존재함
                             .requestMatchers("/api/users/**").authenticated();
                 })
                 //스프링이 제공하는 인증 Form을 사용하겠디

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,6 +65,7 @@ public class UserRestController {
 //        this.userRepository = userRepository;
 //    }
 
+    // 인증 없이 접근 가능한 경로
     @GetMapping("/welcome")
     public String welcome() {
         return "Welcome this endpoint is not secure";
@@ -117,6 +119,7 @@ public class UserRestController {
      */
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')") //관리자(ADMIN)권한이 있는 사용자만 목록 조회 가능ㅇ
     public List<User> getUsers() {
         return userRepository.findAll();
     }
@@ -178,6 +181,7 @@ public class UserRestController {
      *      Body + Http Status Code + Response Headers까지 한번에 담아서 응답을 주는 객체
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')") //일반 사용자(USER) 권한이 있는 사용자만 목록 조회 가능
     public ResponseEntity<User> getUserById(@PathVariable Long id){
         Optional<User> optionalUser = userRepository.findById(id);
 /*
