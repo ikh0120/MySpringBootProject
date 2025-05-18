@@ -31,7 +31,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    //authentication
+    //Authentication
     public UserDetailsService userDetailsService(PasswordEncoder encoder){
         UserDetails admin = User.withUsername("adminboot")
                 .password(encoder.encode("pwd1"))
