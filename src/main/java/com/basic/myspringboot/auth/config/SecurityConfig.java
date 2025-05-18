@@ -101,8 +101,9 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
 //    @Bean
-//    //Authentication
+//    //AuthenticationProvider: InMemoryUserDetailsManager
 //    //인메모리 사용자 저장소 빈 등록(실전에서 DB 기반으로 바꿔야 함)
 //    public UserDetailsService userDetailsService(PasswordEncoder encoder){
 //        //관리자 계정 생성         //admin.username = "adminboot";
