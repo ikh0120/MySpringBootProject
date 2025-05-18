@@ -14,6 +14,8 @@ public class UserInfoUserDetails implements UserDetails {
 
     private String email;
     private String password;
+    /** public interface GrantedAuthority { String getAuthority(); } */
+    //권한 이름 반환 메서드를 가지고 있는 인터페이스임
     private List<GrantedAuthority> authorities;
     private UserInfo userInfo;
 
@@ -28,13 +30,22 @@ public class UserInfoUserDetails implements UserDetails {
         this.password=userInfo.getPassword();
 
 
-        this.authorities= Arrays.stream(userInfo.getRoles().split(","))
-                //["ROLE_ADMIN", "ROLE_USER"]
+        /**public class SimpleGrantedAuthority implements GrantedAuthority {
+         *      private final String role;
+         *
+         *      public SimpleGrantedAuthority(String role) { this.role = role; }
+         *
+         *      @Override
+         *      public String getAuthority() { return role; }
+         * }
+         */
+        this.authorities= Arrays.stream(userInfo.getRoles().split(",")) //List<GrantedAuthority> => Stream<String>
+                // => ["ROLE_ADMIN", "ROLE_USER"]
                 //.map(SimpleGrantedAuthority::new)
-                .map(roleName -> new SimpleGrantedAuthority(roleName))
+                .map(roleName -> new SimpleGrantedAuthority(roleName)) //Stream<String> => Stream<SimpleGrantedAuthority>
                 // => new SimpleGrantedAuthority("ROLE_ADMIN")
                 // => new SimpleGrantedAuthority("ROLE_USER")
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); //Stream<SimpleGrantedAuthority> => List<SimpleGrantedAuthority>
                 // => List.of(
                 //      new SimpleGrantedAuthority("ROLE_ADMIN"),
                 //      new SimpleGrantedAuthority("ROLE_USER"),
@@ -47,14 +58,15 @@ public class UserInfoUserDetails implements UserDetails {
     }
 
 
-    //Spring Security의 AuthenticationManager를 상속받은 ProviderManager가 인증 처리할 때 사용함
+
     @Override
+    //Spring Security의 AuthenticationManager가 인증 처리할 때 사용함
     public String getPassword() {
         return password;
     }
 
-    //Spring Security의 AuthenticationManager를 상속받은 ProviderManager가 인증 처리할 때 사용함
     @Override
+    //Spring Security의 AuthenticationManager가 인증 처리할 때 사용함
     public String getUsername() {
         return email;
     }

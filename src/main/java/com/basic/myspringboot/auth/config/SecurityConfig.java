@@ -94,6 +94,11 @@ public class SecurityConfig {
                 //user.roles = "USER" => user.roles = "ROLE_USER"
                 .roles("USER")
                 .build();   // User.UserBuilder => UserDetails
+
+        //로그인 시 이러한 오류가 남
+        //No AuthenticationProvider found for org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+        //사용자 정보를 InMemoryUserDetailsManager에 저장함 -> 메모리에만 저장되며, DB에는 저장되지 않음
+        //InMemoryUserDetailsManager는 주로 테스트나 데모용으로 사용함
         return new InMemoryUserDetailsManager(admin, user);
     }
 }
