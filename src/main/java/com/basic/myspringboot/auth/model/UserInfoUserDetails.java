@@ -20,8 +20,10 @@ public class UserInfoUserDetails implements UserDetails {
 
     public UserInfoUserDetails(UserInfo userInfo) {
         this.userInfo = userInfo;
-        this.email=userInfo.getEmail(); //UserInfo entity에서 가져온 email을 멤버변수에 저장
-        this.password=userInfo.getPassword(); //UserInfo entity에서 가져온 password을 멤버변수에 저장
+        //UserInfo 엔티티의 이메일 주소를 username 변수에 저장
+        this.email=userInfo.getEmail();
+        //UserInfo 엔티티의 패스워드를 password 변수에 저장
+        this.password=userInfo.getPassword();
         this.authorities= Arrays.stream(userInfo.getRoles().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
@@ -32,14 +34,17 @@ public class UserInfoUserDetails implements UserDetails {
         return authorities;
     }
 
+
+    //Spring Security의 AuthenticationManager를 상속받은 ProviderManager가 인증 처리할 때 사용함
     @Override
     public String getPassword() {
-        return password; //Spring Security의 AuthenticationManager를 상속받은 ProviderManager가 사용함
+        return password;
     }
 
+    //Spring Security의 AuthenticationManager를 상속받은 ProviderManager가 인증 처리할 때 사용함
     @Override
     public String getUsername() {
-        return email; //Spring Security의 AuthenticationManager를 상속받은 ProviderManager가 사용함
+        return email;
     }
     
     public UserInfo getUserInfo() {
