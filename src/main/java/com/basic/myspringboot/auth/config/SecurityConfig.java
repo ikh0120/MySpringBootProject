@@ -83,6 +83,8 @@ public class SecurityConfig {
                 .build();
     }
 
+    //개발자 계정 정보 => username: admin@aa.com   password: pwd1
+    //사용자 계정 정보 => username: user@aa.com   password: pwd2
     //개발자가 커스텀한 UserServiceDetail 서비스를 SpringBean으로 등록하기
     @Bean
     public UserDetailsService userDetailsService() {
@@ -90,7 +92,7 @@ public class SecurityConfig {
         return new UserInfoUserDetailsService();
     }
 
-    @Bean
+    @Bean /**AuthenticationProvider에 DaoAuthenticationProvider()를 사용함*/
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         //UserServiceDetail 서비스가 어떤 객체인지 DaoAuthenticationProvider()에 알려주기
