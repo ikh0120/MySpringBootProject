@@ -26,11 +26,11 @@ public class StudentDTO {
         @NotBlank(message = "Student number is required")
         @Size(max = 20, message = "Student number cannot exceed 20 characters")
         private String studentNumber;
-        
+
         @Valid
         private StudentDetailDTO detailRequest;
     }
-    
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -39,14 +39,14 @@ public class StudentDTO {
         @NotBlank(message = "Address is required")
         @Size(max = 200, message = "Address cannot exceed 200 characters")
         private String address;
-        
+
         @NotBlank(message = "Phone number is required")
         @Size(max = 20, message = "Phone number cannot exceed 20 characters")
         private String phoneNumber;
-        
+
         @Size(max = 100, message = "Email cannot exceed 100 characters")
         private String email;
-        
+
         private LocalDate dateOfBirth;
     }
 
@@ -70,7 +70,7 @@ public class StudentDTO {
                         .dateOfBirth(student.getStudentDetail().getDateOfBirth())
                         .build()
                     : null;
-            
+
             return Response.builder()
                     .id(student.getId())
                     .name(student.getName())
@@ -79,7 +79,7 @@ public class StudentDTO {
                     .build();
         }
     }
-    
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
