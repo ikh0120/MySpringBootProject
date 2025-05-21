@@ -5,6 +5,7 @@ import com.basic.myspringboot.controller.dto.StudentDTO;
 import com.basic.myspringboot.entity.Student;
 import com.basic.myspringboot.entity.StudentDetail;
 import com.basic.myspringboot.exception.BusinessException;
+import com.basic.myspringboot.exception.ErrorCode;
 import com.basic.myspringboot.repository.StudentDetailRepository;
 import com.basic.myspringboot.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,21 +27,21 @@ public class StudentService {
     public List<StudentDTO.Response> getAllStudents() {
         return studentRepository.findAll()
                 .stream()
-                //.map(StudentDTO.Response::fromEntity)
-                .map(student -> StudentDTO.Response.fromEntity(student))
-                .toList();
+                .map(StudentDTO.Response::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public StudentDTO.Response getStudentById(Long id) {
         Student student = studentRepository.findByIdWithStudentDetail(id)
-                .orElseThrow(() -> new BusinessException("Student not found with id: " + id, HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND,
+                        "Student", "id", id));
         return StudentDTO.Response.fromEntity(student);
     }
 
     public StudentDTO.Response getStudentByStudentNumber(String studentNumber) {
         Student student = studentRepository.findByStudentNumber(studentNumber)
-                .orElseThrow(() -> new BusinessException("Student not found with student number: " + studentNumber,
-                        HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND,
+                        "Student", "student number", studentNumber));
         return StudentDTO.Response.fromEntity(student);
     }
 
@@ -48,27 +49,20 @@ public class StudentService {
     public StudentDTO.Response createStudent(StudentDTO.Request request) {
         // Validate student number is not already in use
         if (studentRepository.existsByStudentNumber(request.getStudentNumber())) {
-            throw new BusinessException("Student already exists with student number: "
-                    + request.getStudentNumber(),
-                    HttpStatus.CONFLICT);
+            throw new BusinessException(ErrorCode.STUDENT_NUMBER_DUPLICATE,
+                    request.getStudentNumber());
         }
-        
+
         // Validate email is not already in use (if provided)
-        if (request.getDetailRequest() != null && 
-            request.getDetailRequest().getEmail() != null && 
-            !request.getDetailRequest().getEmail().isEmpty() && 
-            studentDetailRepository.existsByEmail(request.getDetailRequest().getEmail())) {
-            throw new BusinessException("Student detail already exists with email: "
-                    + request.getDetailRequest().getEmail(),
-                    HttpStatus.CONFLICT);
+        if (hasEmailAndExists(request.getDetailRequest())) {
+            throw new BusinessException(ErrorCode.EMAIL_DUPLICATE,
+                    request.getDetailRequest().getEmail());
         }
 
         // Validate phone number is not already in use
-        if (request.getDetailRequest() != null && 
-            studentDetailRepository.existsByPhoneNumber(request.getDetailRequest().getPhoneNumber())) {
-            throw new BusinessException("Student detail already exists with phone number: "
-                    + request.getDetailRequest().getPhoneNumber(),
-                    HttpStatus.CONFLICT);
+        if (hasDetailAndPhoneNumberExists(request.getDetailRequest())) {
+            throw new BusinessException(ErrorCode.PHONE_NUMBER_DUPLICATE,
+                    request.getDetailRequest().getPhoneNumber());
         }
 
         // Create student entity
@@ -76,7 +70,7 @@ public class StudentService {
                 .name(request.getName())
                 .studentNumber(request.getStudentNumber())
                 .build();
-        
+
         // Create student detail if provided
         if (request.getDetailRequest() != null) {
             StudentDetail studentDetail = StudentDetail.builder()
@@ -86,7 +80,7 @@ public class StudentService {
                     .dateOfBirth(request.getDetailRequest().getDateOfBirth())
                     .student(student)
                     .build();
-            
+
             student.setStudentDetail(studentDetail);
         }
 
@@ -99,52 +93,43 @@ public class StudentService {
     public StudentDTO.Response updateStudent(Long id, StudentDTO.Request request) {
         // Find the student
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Student not found with id: "
-                        + id, HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND,
+                        "Student", "id", id));
 
         // Check if another student already has the student number
-        if (!student.getStudentNumber().equals(request.getStudentNumber()) && 
+        if (!student.getStudentNumber().equals(request.getStudentNumber()) &&
                 studentRepository.existsByStudentNumber(request.getStudentNumber())) {
-            throw new BusinessException("Student already exists with student number: "
-                    + request.getStudentNumber(),
-                    HttpStatus.CONFLICT);
+            throw new BusinessException(ErrorCode.STUDENT_NUMBER_DUPLICATE,
+                    request.getStudentNumber());
         }
 
         // Update student basic info
         student.setName(request.getName());
         student.setStudentNumber(request.getStudentNumber());
-        
+
         // Update student detail if provided
         if (request.getDetailRequest() != null) {
             StudentDetail studentDetail = student.getStudentDetail();
-            
+
             // Create new detail if not exists
             if (studentDetail == null) {
                 studentDetail = new StudentDetail();
                 studentDetail.setStudent(student);
                 student.setStudentDetail(studentDetail);
             }
-            
+
             // Validate email is not already in use (if changing)
-            if (request.getDetailRequest().getEmail() != null && 
-                !request.getDetailRequest().getEmail().isEmpty() &&
-                (studentDetail.getEmail() == null || !studentDetail.getEmail()
-                        .equals(request.getDetailRequest().getEmail())) &&
-                studentDetailRepository.existsByEmail(request.getDetailRequest().getEmail())) {
-                throw new BusinessException("Student detail already exists with email: "
-                        + request.getDetailRequest().getEmail(),
-                        HttpStatus.CONFLICT);
+            if (isEmailChangingAndExists(studentDetail, request.getDetailRequest())) {
+                throw new BusinessException(ErrorCode.EMAIL_DUPLICATE,
+                        request.getDetailRequest().getEmail());
             }
-            
+
             // Validate phone number is not already in use (if changing)
-            if ((studentDetail.getPhoneNumber() == null || !studentDetail.getPhoneNumber()
-                    .equals(request.getDetailRequest().getPhoneNumber())) &&
-                studentDetailRepository.existsByPhoneNumber(request.getDetailRequest().getPhoneNumber())) {
-                throw new BusinessException("Student detail already exists with phone number: "
-                        + request.getDetailRequest().getPhoneNumber(),
-                        HttpStatus.CONFLICT);
+            if (isPhoneNumberChangingAndExists(studentDetail, request.getDetailRequest())) {
+                throw new BusinessException(ErrorCode.PHONE_NUMBER_DUPLICATE,
+                        request.getDetailRequest().getPhoneNumber());
             }
-            
+
             // Update detail fields
             studentDetail.setAddress(request.getDetailRequest().getAddress());
             studentDetail.setPhoneNumber(request.getDetailRequest().getPhoneNumber());
@@ -160,8 +145,39 @@ public class StudentService {
     @Transactional
     public void deleteStudent(Long id) {
         if (!studentRepository.existsById(id)) {
-            throw new BusinessException("Student not found with id: " + id, HttpStatus.NOT_FOUND);
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND,
+                    "Student", "id", id);
         }
         studentRepository.deleteById(id);
+    }
+
+    // Helper methods to improve readability and reduce duplication
+
+    private boolean hasEmailAndExists(StudentDTO.StudentDetailDTO detailRequest) {
+        return detailRequest != null &&
+                detailRequest.getEmail() != null &&
+                !detailRequest.getEmail().isEmpty() &&
+                studentDetailRepository.existsByEmail(detailRequest.getEmail());
+    }
+
+    private boolean hasDetailAndPhoneNumberExists(StudentDTO.StudentDetailDTO detailRequest) {
+        return detailRequest != null &&
+                studentDetailRepository.existsByPhoneNumber(detailRequest.getPhoneNumber());
+    }
+
+    private boolean isEmailChangingAndExists(StudentDetail currentDetail,
+                                             StudentDTO.StudentDetailDTO newDetail) {
+        return newDetail.getEmail() != null &&
+                !newDetail.getEmail().isEmpty() &&
+                (currentDetail.getEmail() == null ||
+                        !currentDetail.getEmail().equals(newDetail.getEmail())) &&
+                studentDetailRepository.existsByEmail(newDetail.getEmail());
+    }
+
+    private boolean isPhoneNumberChangingAndExists(StudentDetail currentDetail,
+                                                   StudentDTO.StudentDetailDTO newDetail) {
+        return (currentDetail.getPhoneNumber() == null ||
+                !currentDetail.getPhoneNumber().equals(newDetail.getPhoneNumber())) &&
+                studentDetailRepository.existsByPhoneNumber(newDetail.getPhoneNumber());
     }
 }
