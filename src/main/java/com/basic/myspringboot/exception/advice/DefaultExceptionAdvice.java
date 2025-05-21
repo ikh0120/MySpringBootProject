@@ -49,6 +49,8 @@ public class DefaultExceptionAdvice {
     //숫자타입의 값에 문자열타입의 값을 입력으로 받았을때 발생하는 오류
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<Object> handleException(HttpMessageNotReadableException e) {
+        log.error(e.getMessage(), e);
+
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("message", e.getMessage());
         result.put("httpStatus", HttpStatus.BAD_REQUEST.value());
@@ -71,6 +73,9 @@ public class DefaultExceptionAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
+
+        log.error(ex.getMessage(), ex);
+
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult()
                 .getAllErrors()
