@@ -65,27 +65,31 @@ public class StudentService {
                     request.getDetailRequest().getPhoneNumber());
         }
 
-        // Create student entity
+        // Create student 엔티티 생성 //우선적으로 student_detail 엔티티를 제외하고 만듦
         Student student = Student.builder()
-                .name(request.getName())
-                .studentNumber(request.getStudentNumber())
+                .name(request.getName())    //이름
+                .studentNumber(request.getStudentNumber())  //학번
                 .build();
 
-        // Create student detail if provided
+        // Create studentDetail 엔티티 생성
         if (request.getDetailRequest() != null) {
             StudentDetail studentDetail = StudentDetail.builder()
-                    .address(request.getDetailRequest().getAddress())
-                    .phoneNumber(request.getDetailRequest().getPhoneNumber())
-                    .email(request.getDetailRequest().getEmail())
-                    .dateOfBirth(request.getDetailRequest().getDateOfBirth())
-                    .student(student)
+                    .address(request.getDetailRequest().getAddress())   //주소
+                    .phoneNumber(request.getDetailRequest().getPhoneNumber())   //전화번호
+                    .email(request.getDetailRequest().getEmail())   //이메일
+                    .dateOfBirth(request.getDetailRequest().getDateOfBirth())   //생년월일
+                    //생성하는 StudentDetail과 연관된 Student 엔티티 객체 저장
+                    .student(student) //studentDetail에 student 추가
                     .build();
 
+            //student에 studentDetail 추가
+            //양방향 연관관계이므로 Student와 연관된 StudentDetail 엔티티 객체를 저장
             student.setStudentDetail(studentDetail);
         }
 
-        // Save and return the student
+        // Student와 StudentDetail의 라이프사이클이 동일하므로 Student만 저장
         Student savedStudent = studentRepository.save(student);
+        //Studentㄹ,ㄹ StudentDTO.Response로 변환
         return StudentDTO.Response.fromEntity(savedStudent);
     }
 
