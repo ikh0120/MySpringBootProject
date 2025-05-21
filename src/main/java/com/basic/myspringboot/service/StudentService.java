@@ -89,36 +89,41 @@ public class StudentService {
 
         // Student와 StudentDetail의 라이프사이클이 동일하므로 Student만 저장
         Student savedStudent = studentRepository.save(student);
-        //Studentㄹ,ㄹ StudentDTO.Response로 변환
+        //Student를 StudentDTO.Response로 변환
         return StudentDTO.Response.fromEntity(savedStudent);
     }
 
     @Transactional
     public StudentDTO.Response updateStudent(Long id, StudentDTO.Request request) {
-        // Find the student
+        // 우선적으로 업데이트 할 student를 찾아야 함
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND,
                         "Student", "id", id));
 
-        // Check if another student already has the student number
+        //저장된 학번과 요청한 학번이 일치하지 않으면
         if (!student.getStudentNumber().equals(request.getStudentNumber()) &&
+                //요청한 학번이 중복되는지 체크하기 위해 해당 학번으로 Student 조회
                 studentRepository.existsByStudentNumber(request.getStudentNumber())) {
             throw new BusinessException(ErrorCode.STUDENT_NUMBER_DUPLICATE,
                     request.getStudentNumber());
         }
 
-        // Update student basic info
+        //이름과 학번 변경
         student.setName(request.getName());
         student.setStudentNumber(request.getStudentNumber());
 
         // Update student detail if provided
         if (request.getDetailRequest() != null) {
+            //Student가 연관된 StudentDetail 객체를 가져오기
             StudentDetail studentDetail = student.getStudentDetail();
 
-            // Create new detail if not exists
+            // Create new detail if not exists(저장된 StudentDetail 정보가 없을 경우)
             if (studentDetail == null) {
+                // 새로운 StudentDetail 객체 생성
                 studentDetail = new StudentDetail();
+                //연관된 Student 객체 저장
                 studentDetail.setStudent(student);
+                //Student와 연관된 StudentDetail 객체도 저장
                 student.setStudentDetail(studentDetail);
             }
 
@@ -148,15 +153,18 @@ public class StudentService {
 
     @Transactional
     public void deleteStudent(Long id) {
+        //Student 객체가 있는지 조사 후
         if (!studentRepository.existsById(id)) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND,
                     "Student", "id", id);
         }
+        //존재하면 삭제
         studentRepository.deleteById(id);
     }
 
     // Helper methods to improve readability and reduce duplication
 
+    //이메일이 겹치는지 체크
     private boolean hasEmailAndExists(StudentDTO.StudentDetailDTO detailRequest) {
         return detailRequest != null &&
                 detailRequest.getEmail() != null &&
@@ -164,6 +172,7 @@ public class StudentService {
                 studentDetailRepository.existsByEmail(detailRequest.getEmail());
     }
 
+    //전화번호가 겹치는지 체크
     private boolean hasDetailAndPhoneNumberExists(StudentDTO.StudentDetailDTO detailRequest) {
         return detailRequest != null &&
                 studentDetailRepository.existsByPhoneNumber(detailRequest.getPhoneNumber());
