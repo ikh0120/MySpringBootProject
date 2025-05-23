@@ -36,7 +36,6 @@ import java.util.List;
  * - addCorsMappings() 메서드를 오버라이드하여 글로벌 CORS 정책 설정 가능.
  *   예: 특정 경로에 대해 어떤 origin, method를 허용할지 설정 가능.
  ***/
-
 @Configuration // 스프링 설정 클래스임을 나타냄
 public class CorsConfig {
     @Bean
